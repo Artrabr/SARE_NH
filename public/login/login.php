@@ -7,9 +7,15 @@
     <title>Página de Login</title>
 </head>
 <body>
-hello world
-<?php 
-
-?>
+<div class="login-container">
+    <h1>Login</h1>
+<div>
+<form method="POST" action="../../src/data/pcs_login.php">
+    <input id="username" type="text" name="username" placeholder="Usuário" required>
+    <input id="password" type="password" name="password" placeholder="Senha" required>
+    <button id="login-btn" type="submit">Entrar</button>
+</form>
+</div>
+</div>
 </body>
 </html>
