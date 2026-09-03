@@ -15,6 +15,9 @@
     <input id="password" type="password" name="password" placeholder="Senha" required>
     <button id="login-btn" type="submit">Entrar</button>
 </form>
+<footer>
+    <p>Não tem uma conta? <a href="register.php">Cadastre-se</a></p>
+</footer>
 </div>
 </div>
 </body>
