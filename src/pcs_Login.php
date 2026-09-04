@@ -32,8 +32,8 @@ $date = ['chegada1','chegada2','...'] //array com os nomes dos inputs do formula
 if(FormDataCheck($_POST, $date)){
     ConnectMYSQL();
 
-    $Login = $_POST['Login']; //pega o login do usuário
-    $Password = $_POST['Password']; //pega a senha do usuário
+    $Login = $_POST['login']; //pega o login do usuário
+    $Password = $_POST['password']; //pega a senha do usuário
 
     CompareInfo($Login, 'user_login'/*VERIFICAR O SE ESTÁ CORRETO O VALOR COM O BANCO*/);
     CompareInfo($Password, 'user_password'/*VERIFICAR O SE ESTÁ CORRETO O VALOR COM O BANCO*/);
