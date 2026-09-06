@@ -1,30 +1,30 @@
 <?php
 
 class User {
-    private ?int $Id = null;
-    private $Password;
-    private $Email;
-    public $Name;
-    public $Position; //professor ou coordenador ou bolsista e ect...
+    private ?int $id = null;
+    private $password;
+    private $email;
+    public $name;
+    public $position; //professor ou coordenador ou bolsista e ect...
 
-    public function __construct($Name,$Email,$Password,$Position){
-        $this->Id = $c;
-        $this->Name = $Name;
-        $this->Email = $Email;
-        $this->Password = $Password;
-        $this->Position = $Position;
+    public function __construct($name,$email,$password,$position){
+        $this->id = $c;
+        $this->name = $name;
+        $this->email = $email;
+        $this->password = $password;
+        $this->position = $position;
     }
 
     public function getId(){
-    return $this->Id;
+    return $this->id;
     }
 
     public function getEmail(){
-        return $this->Email;
+        return $this->email;
     }
 
     public function getPosition(){
-        return $this->Position;
+        return $this->position;
     }
 }
 
