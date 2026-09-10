@@ -1,8 +1,8 @@
 <?php
 
-function FormDataCheck($PostData, $RequiredFields){
-    foreach($RequiredFields as $Field){
-        if(!isset($PostData[$Field]) || empty($PostData[$Field])){
+function FormDataCheck($postData, $requiredFields){
+    foreach($requiredFields as $field){
+        if(!isset($postData[$field]) || empty($postData[$field])){
             return false;
         }
     }
@@ -13,7 +13,7 @@ function ConnectMYSQL(){
 
 }
 
-function CompareInfo($Input, $InputMYSQL){
+function CompareInfo($input, $inputMYSQL){
 //input é a variavel que contem algum dado de login do usuario 
 //inputMYSQL é o valor que vc precisa pra pegar o valor do dado cadastrado no banco
 
@@ -32,11 +32,11 @@ $date = ['chegada1','chegada2','...'] //array com os nomes dos inputs do formula
 if(FormDataCheck($_POST, $date)){
     ConnectMYSQL();
 
-    $Login = $_POST['Login']; //pega o login do usuário
-    $Password = $_POST['Password']; //pega a senha do usuário
+    $login = $_POST['Login']; //pega o login do usuário
+    $password = $_POST['Password']; //pega a senha do usuário
 
-    CompareInfo($Login, 'user_login'/*VERIFICAR O SE ESTÁ CORRETO O VALOR COM O BANCO*/);
-    CompareInfo($Password, 'user_password'/*VERIFICAR O SE ESTÁ CORRETO O VALOR COM O BANCO*/);
+    CompareInfo($login, 'user_login'/*VERIFICAR O SE ESTÁ CORRETO O VALOR COM O BANCO*/);
+    CompareInfo($password, 'user_password'/*VERIFICAR O SE ESTÁ CORRETO O VALOR COM O BANCO*/);
 
     DisconnectMYSQL();
     exit();
