@@ -20,29 +20,35 @@ function connect(){
     return $pdo;
 }
 
-function insertData($pdo, array $requiredFields){
-    $userlogin = $_POST['username'];
+function insertData($pdo){
+    $userlogin = $_POST['login'];
     $password = $_POST['password'];
 
-    $password = password_hash($password);
-
-    $stmt = $pdo->prepare("INSERT INTO user (user_email, user_password) VALUES (:user_email, :user_password)");
+    $stmt = $pdo->prepare("SELECT user_password FROM user WHERE user_email = :user_email");
     $stmt->bindParam(':user_email', $userlogin);
-    $stmt->bindParam(':user_password', $password);
     $stmt->execute();
+    $hash = $stmt->fetchColumn();
+
+    if(password_verify($password, $hash)){
+        return true;
+    }
+    
+    return false;
 }
 
 //-------------------------
 //         CÓDIGO
 //-------------------------
 
-$requiredFields = ['username', 'password'];
+$requiredFields = ['login', 'password'];
 
 if(checkData($_POST, $requiredFields)){
     $pdo = connect();
-    insertData($pdo, $requiredFields);
+    $isValid = insertData($pdo);
     disconnect();
-    header("Location: ../public/index.php");
-    exit();
+    if($isValid){
+        header("Location: ../public/index.php");
+        exit();
+    }
 }
 header("Location: ../public/index.php");
