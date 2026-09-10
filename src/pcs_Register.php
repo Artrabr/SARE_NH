@@ -23,7 +23,7 @@ function connect(){
 function insertData($pdo, array $requiredFields){
     $userlogin = $_POST['username'];
     $password = $_POST['password'];
-    
+
     $password = password_hash($password);
 
     $stmt = $pdo->prepare("INSERT INTO user (user_email, user_password) VALUES (:user_email, :user_password)");
@@ -42,4 +42,7 @@ if(checkData($_POST, $requiredFields)){
     $pdo = connect();
     insertData($pdo, $requiredFields);
     disconnect();
+    header("Location: ../public/index.php");
+    exit();
 }
+header("Location: ../public/index.php");
