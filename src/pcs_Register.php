@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../data/Connect.php';
+require_once __DIR__ . '/data/Connect.php';
 
 function checkData($data, array $requiredFields){
     foreach($requiredFields as $field){
@@ -16,19 +16,21 @@ function disconnect(){
 }
 
 function connect(){
-    $pdo = Connect::getInstance();
+    $pdo = Connection::Connect();
     return $pdo;
 }
 
 function insertData($pdo){
-    $userlogin = $_POST['login'];
+    $userlogin = $_POST['email'];
     $password = $_POST['password'];
+    $username = $_POST['username'];
 
-    $password = password_hash($password);
+    $password = password_hash($password,PASSWORD_DEFAULT);
 
-    $stmt = $pdo->prepare("INSERT INTO user (user_email, user_password) VALUES (:user_email, :user_password)");
+    $stmt = $pdo->prepare("INSERT INTO user (user_email, user_password, user_name) VALUES (:user_email, :user_password, :user_name)");
     $stmt->bindParam(':user_email', $userlogin);
     $stmt->bindParam(':user_password', $password);
+    $stmt->bindParam(':user_name', $username);
     $stmt->execute();
 }
 
@@ -36,7 +38,7 @@ function insertData($pdo){
 //         CÓDIGO
 //-------------------------
 
-$requiredFields = ['login', 'password'];
+$requiredFields = ['email', 'password','username'];
 
 if(checkData($_POST, $requiredFields)){
     $pdo = connect();
@@ -45,4 +47,4 @@ if(checkData($_POST, $requiredFields)){
     header("Location: ../public/index.php");
     exit();
 }
-header("Location: ../public/index.php");
+header("Location: ../public/index.php?error=1");

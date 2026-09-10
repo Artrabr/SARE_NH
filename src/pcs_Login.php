@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../data/Connect.php';
+require_once __DIR__ . '/data/Connect.php';
 
 function checkData($data, array $requiredFields){
     foreach($requiredFields as $field){
