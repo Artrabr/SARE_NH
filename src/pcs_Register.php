@@ -20,8 +20,8 @@ function connect(){
     return $pdo;
 }
 
-function insertData($pdo, array $requiredFields){
-    $userlogin = $_POST['username'];
+function insertData($pdo){
+    $userlogin = $_POST['login'];
     $password = $_POST['password'];
 
     $password = password_hash($password);
@@ -36,11 +36,11 @@ function insertData($pdo, array $requiredFields){
 //         CÓDIGO
 //-------------------------
 
-$requiredFields = ['username', 'password'];
+$requiredFields = ['login', 'password'];
 
 if(checkData($_POST, $requiredFields)){
     $pdo = connect();
-    insertData($pdo, $requiredFields);
+    insertData($pdo);
     disconnect();
     header("Location: ../public/index.php");
     exit();

@@ -1,47 +1,48 @@
 <?php
 
-function FormDataCheck($postData, $requiredFields){
+require_once __DIR__ . '/../data/Connect.php';
+
+function checkData($data, array $requiredFields){
     foreach($requiredFields as $field){
-        if(!isset($postData[$field]) || empty($postData[$field])){
+        if(empty($data[$field])){
             return false;
         }
     }
     return true;
 }
 
-function ConnectMYSQL(){
-
+function disconnect(){
+    $pdo = null;
 }
 
-function CompareInfo($input, $inputMYSQL){
-//input é a variavel que contem algum dado de login do usuario 
-//inputMYSQL é o valor que vc precisa pra pegar o valor do dado cadastrado no banco
-
+function connect(){
+    $pdo = Connect::getInstance();
+    return $pdo;
 }
 
-function DisconnectMYSQL(){
+function insertData($pdo, array $requiredFields){
+    $userlogin = $_POST['username'];
+    $password = $_POST['password'];
 
+    $password = password_hash($password);
+
+    $stmt = $pdo->prepare("INSERT INTO user (user_email, user_password) VALUES (:user_email, :user_password)");
+    $stmt->bindParam(':user_email', $userlogin);
+    $stmt->bindParam(':user_password', $password);
+    $stmt->execute();
 }
 
 //-------------------------
 //         CÓDIGO
 //-------------------------
 
-$date = ['chegada1','chegada2','...'] //array com os nomes dos inputs do formulario de login *QUE SAO OBRIGATORIOS*
+$requiredFields = ['username', 'password'];
 
-if(FormDataCheck($_POST, $date)){
-    ConnectMYSQL();
-
-    $login = $_POST['Login']; //pega o login do usuário
-    $password = $_POST['Password']; //pega a senha do usuário
-
-    CompareInfo($login, 'user_login'/*VERIFICAR O SE ESTÁ CORRETO O VALOR COM O BANCO*/);
-    CompareInfo($password, 'user_password'/*VERIFICAR O SE ESTÁ CORRETO O VALOR COM O BANCO*/);
-
-    DisconnectMYSQL();
+if(checkData($_POST, $requiredFields)){
+    $pdo = connect();
+    insertData($pdo, $requiredFields);
+    disconnect();
+    header("Location: ../public/index.php");
     exit();
-    header("Location: ../index.php?success=1");
 }
-
-header("Location: ../index.php?error=1");
-?>
+header("Location: ../public/index.php");
