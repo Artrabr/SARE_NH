@@ -1,0 +1,48 @@
+.mapa {
+  @media (max-width: 768px) {
+    width: 100%;
+    height: auto;
+    margin-left: 5px;
+    margin-right: 5px;
+  }
+}
+
+.scroll {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+/* FIX:fazer subsetting da fonte*/
+@font-face {
+  font-family: 'Oswald';
+  src: url('./assets/fonts/Oswald-VariableFont_wght.ttf') format('truetype');
+  font-weight: 200-900;
+  /* 400 is the standard normal weight */
+  font-style: normal;
+}
+
+object {
+  /* Syntax: drop-shadow(offset-x offset-y blur-radius color) */
+  filter: drop-shadow(8px 8px 0px rgba(0, 0, 0, 1));
+  padding: 0px;
+  margin: 0px;
+  display: block;
+}
+
+.svg_background {
+  height: max-content;
+  width: min-content;
+  background-color: lightgreen;
+  padding-bottom: 8px;
+  padding-right: 8px;
+  /* border: black solid 5px; */
+}
+
+:root {
+  --borda_interna_primeiro_andar: black;
+  --width_borda_interna_primeiro_andar: 0.5;
+
+  --borda_externa_primeiro_andar: black;
+  --width_borda_externa_primeiro_andar: 1.2;
+}
