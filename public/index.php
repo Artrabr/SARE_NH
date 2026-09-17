@@ -8,7 +8,7 @@
 <body>
     
     <a href="login/login.php">login</a><br>
-    <a href="register/register.php">Register</a>
+    <a href="register/index.php">Register</a>
 
 </body>
 </html>
