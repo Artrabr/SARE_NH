@@ -9,6 +9,7 @@
 <body>
 
     <div class="login-container">
+        <img src="ifsul-logo.png"></img>
         <h1>Login</h1>
         <form method="POST" action="../../src/data/pcs_login.php">
             <label for="username" class="labels">Nome de Usuário:</label>
