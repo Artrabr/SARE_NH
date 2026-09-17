@@ -1,4 +1,4 @@
-<?xml-stylesheet type="text/css" href="../style.css"?>
+<?xml-stylesheet type="text/css" href="../map_style.css"?>
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="131.25668mm" id="svg1" viewBox="0 0 156.29382 131.25668" width="156.29382mm" xml:space="preserve"><style id="style166">#predio_administrativo {   }
 #borda_interna_primeiro_andar { stroke:var(--borda_interna_primeiro_andar);    stroke-width:var(--width_borda_interna_primeiro_andar); }
 #borda_externa_primeiro_andar { stroke-width:var(--width_borda_externa_primeiro_andar);    stroke:var(--borda_externa_primeiro_andar); }

@@ -1,0 +1,7 @@
+:root {
+  --borda_interna_primeiro_andar: black;
+  --width_borda_interna_primeiro_andar: 0.5;
+
+  --borda_externa_primeiro_andar: black;
+  --width_borda_externa_primeiro_andar: 1.2;
+}
