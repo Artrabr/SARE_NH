@@ -1,0 +1,56 @@
+:root {
+  --border_color: #111111;
+  --background-color-body: #E2E2E2;
+  --background-color: #f1f1f1;
+  --accent-color: #20a732;
+  color: var(--border_color);
+  background-color: var(--background-color-body);
+  border-radius: 0px;
+
+
+  --big_border_size: 4px;
+  --big_box_shadow_size: 8px;
+
+  --big_border: var(--border_color) solid var(--big_border_size);
+  --big_box_shadow: var(--big_box_shadow_size) var(--big_box_shadow_size) 0px rgba(0, 0, 1);
+
+  section,
+  article {
+    border: var(--big_border);
+    box-shadow: var(--big_box_shadow);
+    background-color: var(--background-color);
+  }
+
+  --medium_border_size: 2px;
+  --medium_box_shadow_size: 4px;
+
+  --medium_border: var(--border_color) solid var(--medium_border_size);
+  --medium_box_shadow: var(--medium_box_shadow_size) var(--medium_box_shadow_size) 0px rgba(0, 0, 1);
+
+  input,
+  button {
+    border: var(--medium_border);
+    box-shadow: var(--medium_box_shadow);
+  }
+
+  input[type="button"],
+  button {
+    background-color: var(--accent-color);
+
+    &:hover {
+      background-color: oklch(from var(--accent-color) calc(l + 0.05) c h);
+      transition: background-color 0.2s ease;
+    }
+  }
+
+  input {
+    background-color: inherit;
+    font-family: inherit;
+
+    label {
+      text-align: start;
+    }
+  }
+
+  font-size: 16px;
+}

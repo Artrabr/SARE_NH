@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="register.css">
+    <link rel="stylesheet" href="../ifBrutal.css">
     <title>Página de Registro</title>
 </head>
 <body>
 
-    <div class="login-container">
+    <section class="login-container">
         <img src="../midia/img/ifsullogo/ifsul-logo.png" alt="logo if">
         <h1>Registro</h1>
         <form method="POST" action="pcs_Register.php">
@@ -23,10 +24,6 @@
 
             <button id="login-btn" type="submit">Registar-se</button>
         </form>
-
-        <footer>
-            
-        </footer>
-    </div>
+    </section>
 </body>
 </html>
