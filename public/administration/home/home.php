@@ -26,7 +26,7 @@
     <div> <!--atalhos iniciais-->
         <ul>
             <li><a href="../../user/users.php/users.php">Gerenciar Horarios</a></li>
-            <li><a href="../teacher/teacher.php">Gerenciar Registros de professores</a></li>
+            <li><a href="../classroomTimeList/classroomTimeList.php">Gerenciar Registros de salas</a></li>
             <li><a href="settings.php">Configurações</a></li>
         </ul>
     </div>
