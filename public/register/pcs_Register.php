@@ -11,6 +11,15 @@ function checkData($data, array $requiredFields){
     return true;
 }
 
+function isEmailDomainAllowed(string $email): bool {$domainWhiteList = 'ifsul.edu.br';
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        return false;
+    }
+    $parts = explode('@', $email);
+    $domain = end($parts);
+    return in_aray($domain, $domainWhiteList);
+}
+
 function disconnect(){
     $pdo = null;
 }
