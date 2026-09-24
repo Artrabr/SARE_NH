@@ -8,9 +8,9 @@ class User {
     public $position; //professor ou coordenador ou bolsista e ect...
 
     public function __construct($name,$email,$password,$position){
-        $this->id = $c;
-        $this->name = $name;
-        $this->email = $email;
+        $this->id       = $c;
+        $this->name     = $name;
+        $this->email    = $email;
         $this->password = $password;
         $this->position = $position;
     }

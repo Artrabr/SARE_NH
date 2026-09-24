@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../../src/data/Connect.php';
+require_once __DIR__ . '/data/Connect.php';
 
 function checkData($data, array $requiredFields){
     foreach($requiredFields as $field){
@@ -36,6 +36,10 @@ function insertData($pdo){
     return false;
 }
 
+function giveSession(){
+
+}
+
 //-------------------------
 //         CÓDIGO
 //-------------------------
@@ -51,4 +55,4 @@ if(checkData($_POST, $requiredFields)){
         exit();
     }
 }
-header("Location: ../index.php");
+header("Location: ../public/index.php?sucesso=true");

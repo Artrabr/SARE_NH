@@ -23,4 +23,16 @@ class UserDB
         }
         return null;
     }
+
+    public function getUserByEmail(int $email): ?User
+    {
+        $stmt = $this->pdo->prepare("SELECT user_id, user_name, user_email FROM `user` WHERE user_email = ?");
+        $stmt->execute([$email]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($row) {
+            return new User((int) $row['user_id'], $row['user_name'], $row['user_email']);
+        }
+        return null;
+    }
 }

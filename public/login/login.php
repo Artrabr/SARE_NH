@@ -11,7 +11,7 @@
     <div class="login-container">
         <img src="ifsul-logo.png"></img>
         <h1>Login</h1>
-        <form method="POST" action="../../src/data/pcs_login.php">
+        <form method="POST" action="../../src/pcs_login.php">
             <label for="username" class="labels">Nome de Usuário:</label>
             <input id="username" type="text" name="username" placeholder="Usuário" required>
 
