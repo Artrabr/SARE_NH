@@ -11,16 +11,17 @@ function checkData($data, array $requiredFields){
     return true;
 }
 
-function isEmailDomainAllowed(string $email): bool {$domainWhiteList = 'ifsul.edu.br';
+function isEmailDomainAllowed(string $email): bool {
+    $domainWhiteList = ['ifsul.edu.br'];
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         return false;
     }
     $parts = explode('@', $email);
     $domain = end($parts);
-    return in_aray($domain, $domainWhiteList);
+    return in_array($domain, $domainWhiteLis, true);
 }
 
-function disconnect(){
+function disconnect(&$pdo){
     $pdo = null;
 }
 
@@ -59,12 +60,23 @@ function insertData($pdo){
 $requiredFields = ['email', 'password', 'username', 'category'];
 
 if(checkData($_POST, $requiredFields)){
-    $pdo = connect();
-    $isRegistered = insertData($pdo);
-    disconnect();
-    if ($isRegistered) {
+    header("Location: ../index.php?error=1");
+    exit();
+    
+}
+if (!isEmailDomainAllowed($_POST['email'])) {
+    header("Location: ../index.php?error=2");
+    exit();
+}
+
+$pdo = connect();
+$isRegistered = insertData($pdo);
+disconnect();
+if ($isRegistered) {
         header("Location: ../index.php");
         exit();
     }
-}
+
 header("Location: ../index.php?error=1");
+exit();
+
