@@ -1,3 +1,7 @@
+<?php
+require_once __DIR__ . '/../src/class/user/User.php';
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="pt-br">
   <head>
@@ -10,11 +14,18 @@
   
     <a href="login/login.php">login</a><br>
     <a href="register/index.php">Register</a>
-
+    
+    <?php if(isset($_SESSION['obj_user']) && $_SESSION['obj_user']->getCategory() == "coordenador"):?>
+      <a href="administration/home/home.php">administrar</a>
+    <?php endif;?>
+    
     <?php if(isset($_SESSION['obj_user'])):?>
       <img src="img/logado.png" alt="logado">
-    <?php endif?>
-      <img src="img/logado.png" alt="logado">
+    <?php else:?>
+      <img src="img/nologado.png" alt="não logado">
+    <?php endif; ?>
+    
+    
     <div class="svg_background">
 
       <object data="./stable_optimized_relative_4_0.svg" type="image/svg+xml"></object>
