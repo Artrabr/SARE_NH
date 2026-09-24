@@ -14,24 +14,24 @@ class UserDB
 
     public function getUserByID(int $id): ?User
     {
-        $stmt = $this->pdo->prepare("SELECT user_id, user_name, user_email FROM `user` WHERE user_id = ?");
+        $stmt = $this->pdo->prepare("SELECT user_id, user_name, user_email, user_category FROM `user` WHERE user_id = ?");
         $stmt->execute([$id]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($row) {
-            return new User((int) $row['user_id'], $row['user_name'], $row['user_email']);
+            return new User((int) $row['user_id'], $row['user_name'], $row['user_email'], $row['user_category']);
         }
         return null;
     }
 
-    public function getUserByEmail(int $email): ?User
+    public function getUserByEmail(string $email): ?User
     {
-        $stmt = $this->pdo->prepare("SELECT user_id, user_name, user_email FROM `user` WHERE user_email = ?");
+        $stmt = $this->pdo->prepare("SELECT user_id, user_name, user_email, user_category FROM `user` WHERE user_email = ?");
         $stmt->execute([$email]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($row) {
-            return new User((int) $row['user_id'], $row['user_name'], $row['user_email']);
+            return new User((int) $row['user_id'], $row['user_name'], $row['user_email'], $row['user_category']);
         }
         return null;
     }

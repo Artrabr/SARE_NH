@@ -1,7 +1,8 @@
 <?php
+session_start();
 
 require_once __DIR__ . '/data/Connect.php';
-require_once __DIR__ . '/class/UserDB.php';
+require_once __DIR__ . '/class/user/UserDB.php';
 
 function checkData($data, array $requiredFields){
     foreach($requiredFields as $field){
@@ -38,7 +39,7 @@ function insertData($pdo){
 }
 
 function giveSession($pdo){
-    $email = $_POST['email']
+    $email = $_POST['email'];
     $db = new UserDB($pdo);
     $client_object = $db->getUserByEmail($email);
     $_SESSION['obj_user'] = $client_object;
@@ -47,17 +48,19 @@ function giveSession($pdo){
 //-------------------------
 //         CÓDIGO
 //-------------------------
+// -------------------------------------------->>>>>>>   LEIA ISSO:  antes eu e Deus sabiamos oq tinha aqui, agora só Deus
 
 $requiredFields = ['email', 'password'];
 
 if(checkData($_POST, $requiredFields)){
     $pdo = connect();
     $isValid = insertData($pdo);
-    giveSession($pdo);
-    disconnect();
     if($isValid){
-        header("Location: ../index.php");
+        giveSession($pdo);
+        disconnect();
+        header("Location: ../public/index.php?sucesso=true");
         exit();
     }
+    disconnect();
 }
-header("Location: ../public/index.php?sucesso=true");
+header("Location: ../public/index.php?sucesso=false");

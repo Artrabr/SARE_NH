@@ -22,6 +22,15 @@
             <label for="password" class="labels">Senha:</label>
             <input id="password" type="password" name="password" placeholder="Crie sua senha" required>
 
+            <label for="category" class="labels">Categoria:</label>
+            <select id="category" name="category" required>
+                <option value="">Selecione sua categoria</option>
+                <option value="professor">Professor</option>
+                <option value="coordenador">Coordenador</option>
+                <option value="servidor">Servidor</option>
+                <option value="diretor">Diretor</option>
+            </select>
+
             <button id="login-btn" type="submit">Registar-se</button>
         </form>
     </section>
