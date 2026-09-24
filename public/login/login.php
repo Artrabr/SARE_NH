@@ -12,8 +12,8 @@
         <img src="ifsul-logo.png"></img>
         <h1>Login</h1>
         <form method="POST" action="../../src/pcs_login.php">
-            <label for="username" class="labels">Nome de Usuário:</label>
-            <input id="username" type="text" name="username" placeholder="Usuário" required>
+            <label for="email" class="labels">Email:</label>
+            <input id="email" type="text" name="email" placeholder="email" required>
 
             <label for="password" class="labels">Senha:</label>
             <input id="password" type="password" name="password" placeholder="Senha" required>

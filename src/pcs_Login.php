@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/data/Connect.php';
+require_once __DIR__ . '/class/UserDB.php';
 
 function checkData($data, array $requiredFields){
     foreach($requiredFields as $field){
@@ -21,11 +22,11 @@ function connect(){
 }
 
 function insertData($pdo){
-    $userlogin = $_POST['username'];
+    $email = $_POST['email'];
     $password = $_POST['password'];
 
     $stmt = $pdo->prepare("SELECT user_password FROM `user` WHERE user_email = :user_email");
-    $stmt->bindParam(':user_email', $userlogin);
+    $stmt->bindParam(':user_email', $email);
     $stmt->execute();
     $hash = $stmt->fetchColumn();
 
@@ -36,19 +37,23 @@ function insertData($pdo){
     return false;
 }
 
-function giveSession(){
-
+function giveSession($pdo){
+    $email = $_POST['email']
+    $db = new UserDB($pdo);
+    $client_object = $db->getUserByEmail($email);
+    $_SESSION['obj_user'] = $client_object;
 }
 
 //-------------------------
 //         CÓDIGO
 //-------------------------
 
-$requiredFields = ['username', 'password'];
+$requiredFields = ['email', 'password'];
 
 if(checkData($_POST, $requiredFields)){
     $pdo = connect();
     $isValid = insertData($pdo);
+    giveSession($pdo);
     disconnect();
     if($isValid){
         header("Location: ../index.php");
