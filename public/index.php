@@ -25,7 +25,12 @@ session_start();
       <img src="img/nologado.png" alt="não logado">
     <?php endif; ?>
     
-    
+    <!--temporario até a implementacao do mapa-->
+    <form method="POST" action="../src/pcs_SlotReservation.php">
+      <input type="hidden" value="<?= $_SESSION['obj_user']->getEmail()?>">
+      <input type="submit" value="B2-02">
+    </form>
+
     <div class="svg_background">
 
       <object data="./stable_optimized_relative_4_0.svg" type="image/svg+xml"></object>
