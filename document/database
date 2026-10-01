@@ -1,11 +1,30 @@
-drop database sarenh;
-create database sarenh;
-use sarenh;
+DROP DATABASE IF EXISTS sarenh;
+CREATE DATABASE sarenh;
+USE sarenh;
 
-CREATE TABLE user (
+CREATE TABLE User ( -- todo usuario é servidor ou professor
     user_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     user_name VARCHAR(50) NOT NULL,
     user_password VARCHAR(255) NOT NULL,
     user_email VARCHAR(150) NOT NULL,
-    user_category ENUM('professor', 'coordenador', 'servidor', 'diretor') NOT NULL
+    user_category VARCHAR(50) NOT NULL,
+	user_subject VARCHAR(50)
+);
+
+CREATE TABLE slot (
+    slot_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    slot_name VARCHAR(100) NOT NULL,
+    slot_institutional_name VARCHAR(150),
+    slot_description VARCHAR(500)  
+    /*contem ar condicionado
+    contem cadeira e etc pode ser adicionado dps*/
+);
+
+CREATE TABLE reserved_slot (
+    user_id INT NOT NULL,
+    slot_id INT NOT NULL,
+    reserved_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id, slot_id),
+    FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (slot_id) REFERENCES slot(slot_id) ON DELETE CASCADE
 );
