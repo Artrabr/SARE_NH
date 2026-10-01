@@ -23,8 +23,7 @@ class UserDB
         }
         return null;
     }
-
-    /** @return User[] */
+    /* @return User[] */
     public function getAllUsers(): array
     {
         $stmt = $this->pdo->query(
@@ -56,5 +55,28 @@ class UserDB
             return new User((int) $row['user_id'], $row['user_name'], $row['user_email'], $row['user_category']);
         }
         return null;
+    }
+
+    public function createUser(string $name, string $email, string $password, string $category): ?User
+    {
+        $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+        try {
+            $stmt = $this->pdo->prepare("INSERT INTO `user` (user_name, user_email, user_password, user_category) VALUES (:name, :email, :password, :category)");
+            $stmt->execute([
+                'name' => $name,
+                'email' => $email,
+                'password' => $hashedPassword,
+                'category' => $category,
+            ]);
+            $id = (int) $this->pdo->lastInsertId();
+
+            return new User($id, $name, $email, $category);
+        } catch (PDOException $e) {
+            //error for when the email already exists
+            if ($e->getCode() == '23000' && ($e->errorInfo[1] ?? null) === 1062) {
+                throw new DuplicateEmail("Email already used", 409);
+            }
+            throw $e;
+        }
     }
 }

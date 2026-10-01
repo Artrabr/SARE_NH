@@ -1,8 +1,8 @@
 <?php
 session_start();
 
-require_once __DIR__ . '/data/Connect.php';
-require_once __DIR__ . '/class/user/UserDB.php';
+require_once __DIR__ . '/data/Connection.php';
+require_once __DIR__ . '/class/User/UserDB.php';
 
 function checkData($data, array $requiredFields){
     foreach($requiredFields as $field){
