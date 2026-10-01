@@ -8,7 +8,7 @@
     <title>Página de Registro</title>
 </head>
 <body>
-
+task pra desenvolvimento: <br> adicionar addom de materia quando selecionado professor. 
     <section class="login-container">
         <img src="../midia/img/ifsullogo/ifsul-logo.png" alt="logo if">
         <h1>Registro</h1>
