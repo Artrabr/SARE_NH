@@ -36,13 +36,14 @@ if ($isUserLoggedIn && method_exists($_SESSION['obj_user'], 'getDefaultReservati
     
     <?php if ($isUserLoggedIn && $_SESSION['obj_user']->getCategory() === "coordenador"): ?>
       <a href="administration/home/home.php">administrar</a>
-    <?php endif; ?>
+    <?php endif; 
     
-    <?php if ($isUserLoggedIn): ?>
+    /*    <?php if ($isUserLoggedIn): ?>
       <img src="img/logado.png" alt="logado">
     <?php else: ?>
       <img src="img/nologado.png" alt="não logado">
-    <?php endif; ?>
+    <?php endif; ?>*/
+    ?>
 
     <main class="main-container<?= $selectedSlot !== null ? ' has-selection' : '' ?>">
       <section class="slots-section">

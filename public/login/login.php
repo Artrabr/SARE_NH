@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="../register/register.css">
+    <link rel="stylesheet" href="../ifBrutal.css">
     <title>Página de Login</title>
 </head>
 <body>
 
-    <div class="login-container">
-        <img src="ifsul-logo.png"></img>
+    <section class="login-container">
+        <img src="../midia/img/ifsullogo/ifsul-logo.png" alt="Logo do IFSul">
         <h1>Login</h1>
         <form method="POST" action="../../src/pcs_login.php">
             <label for="email" class="labels">Email:</label>
@@ -22,8 +23,8 @@
         </form>
 
         <footer>
-            <p>Não tem uma conta? <a style="text-decoration: none; font-weight: bold; color: #20a732" href="register.php">Cadastre-se</a></p>
+            <p>Não tem uma conta? <a style="text-decoration: none; font-weight: bold; color: #20a732" href="../register/index.php">Cadastre-se</a></p>
         </footer>
-    </div>
+    </section>
 </body>
 </html>
