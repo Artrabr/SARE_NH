@@ -14,8 +14,7 @@ class Teacher extends User {
     }
     
     //devolve o assinto padrao de reserva
-    public function getDefaultReservationTopic(string $subject): string { 
-        $output = "Aula de $subject";
-        return $output;
+    public function getDefaultReservationTopic(): string {
+        return "Aula de {$this->subject}";
     }
 }

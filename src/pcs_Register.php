@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/data/Connection.php';
 require_once __DIR__ . '/class/User/UserDB.php';
+require_once __DIR__ . '/class/Teacher/Teacher.php';
 require_once __DIR__ . '/libraly/validate.php';
 session_start();
 
@@ -33,6 +34,10 @@ if(!checkData($_POST, $requiredFields)){
     header("Location: ../public/index.php?error=1");
     exit();
 }
+if ($_POST['category'] === 'professor' && (!isset($_POST['subject']) || trim($_POST['subject']) === '')) {
+    header("Location: ../public/index.php?error=1");
+    exit();
+}
 if (!isEmailDomainAllowed($_POST['email'])) {
     header("Location: ../public/index.php?error=2");
     exit();
@@ -43,6 +48,15 @@ $userDB = new UserDB($pdo);
 
 try {
     $user = $userDB->createUser($_POST['username'], $_POST['email'], $_POST['password'], $_POST['category']);
+    if ($_POST['category'] === 'professor') {
+        $user = new Teacher(
+            $user->getId(),
+            $user->getName(),
+            $user->getEmail(),
+            $user->getCategory(),
+            trim($_POST['subject'])
+        );
+    }
 } catch (DuplicateEmail $e) {
     disconnect($pdo);
     header("Location: ../public/index.php?error=3");
@@ -57,4 +71,3 @@ $_SESSION['obj_user'] = $user;
 disconnect($pdo);
 header("Location: ../public/index.php?sucesso=true");
 exit();
-

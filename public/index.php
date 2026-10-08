@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../src/class/user/User.php';
+require_once __DIR__ . '/../src/class/Teacher/Teacher.php';
 require_once __DIR__ . '/../src/class/Slot/SlotDB.php';
 require_once __DIR__ . '/../src/data/Connection.php';
 session_start();
@@ -9,13 +10,15 @@ session_start();
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>teste abuble</title>
+    <link rel="icon" type="image/x-icon" href=""><!--LOGO DO SITE-->
+    <title>SARENH</title>
     <link href="index_style.css" rel="stylesheet">
   </head>
   <body class="scroll">
   
     <a href="login/login.php">login</a><br>
     <a href="register/index.php">Register</a>
+    <a href="../src/pcs_EndSession.php">logout</a>
     
     <?php if(isset($_SESSION['obj_user']) && $_SESSION['obj_user']->getCategory() == "coordenador"):?>
       <a href="administration/home/home.php">administrar</a>
@@ -103,12 +106,5 @@ session_start();
     <?php
       endforeach;
     ?>
-
-    <div class="svg_background">
-
-      <object data="./stable_optimized_relative_4_0.svg" type="image/svg+xml"></object>
-
-    </div>
-
   </body>
 </html>

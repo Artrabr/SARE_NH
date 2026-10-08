@@ -1,5 +1,6 @@
 <?php
     require_once __DIR__ . '/../../../src/class/user/User.php';
+    require_once __DIR__ . '/../../../src/class/Teacher/Teacher.php';
     session_start();
 
     if (

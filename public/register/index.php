@@ -8,7 +8,6 @@
     <title>Página de Registro</title>
 </head>
 <body>
-task pra desenvolvimento: <br> adicionar addom de materia quando selecionado professor. 
     <section class="login-container">
         <img src="../midia/img/ifsullogo/ifsul-logo.png" alt="logo if">
         <h1>Registro</h1>
@@ -31,8 +30,28 @@ task pra desenvolvimento: <br> adicionar addom de materia quando selecionado pro
                 <option value="diretor">Diretor</option>
             </select>
 
+            <div id="subject-field" hidden>
+                <label for="subject" class="labels">Matéria:</label>
+                <input id="subject" type="text" name="subject" placeholder="Digite sua matéria" disabled>
+            </div>
+
             <button id="login-btn" type="submit">Registar-se</button>
         </form>
     </section>
+    <script>
+        const category = document.getElementById('category');
+        const subjectField = document.getElementById('subject-field');
+        const subject = document.getElementById('subject');
+
+        function updateSubjectField() {
+            const isTeacher = category.value === 'professor';
+            subjectField.hidden = !isTeacher;
+            subject.disabled = !isTeacher;
+            subject.required = isTeacher;
+        }
+
+        category.addEventListener('change', updateSubjectField);
+        updateSubjectField();
+    </script>
 </body>
 </html>

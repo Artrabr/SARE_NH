@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/class/User/User.php';
+require_once __DIR__ . '/class/Teacher/Teacher.php';
 session_start();
 
 require_once __DIR__ . '/data/Connection.php';
