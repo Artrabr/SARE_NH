@@ -1,0 +1,5 @@
+    <?php if(isset($_SESSION['obj_user'])):?>
+      <img src="img/logado.png" alt="logado">
+    <?php else:?>
+      <img src="img/nologado.png" alt="não logado">
+    <?php endif;?>
