@@ -1,0 +1,5 @@
+ALTER TABLE reserved_slot
+    ADD COLUMN topic VARCHAR(255) NOT NULL,
+    ADD COLUMN start_time TIME NOT NULL,
+    ADD COLUMN end_time TIME NOT NULL,
+    ADD COLUMN reason VARCHAR(255) NULL;

@@ -4,19 +4,19 @@ require_once __DIR__ . '/../src/class/Teacher/Teacher.php';
 require_once __DIR__ . '/../src/class/Slot/SlotDB.php';
 require_once __DIR__ . '/../src/data/Connection.php';
 session_start();
-$usuarioLogado = isset($_SESSION['obj_user']);
-$slotDB = new SlotDB(Connection::Connect());
-$slots = $slotDB->getAllSlots();
-$slotID = filter_input(INPUT_GET, 'slot_id', FILTER_VALIDATE_INT);
-$slotSelecionado = null;
+$isUserLoggedIn = isset($_SESSION['obj_user']);
+$slotDb = new SlotDB(Connection::Connect());
+$slots = $slotDb->getAllSlots();
+$slotId = filter_input(INPUT_GET, 'slot_id', FILTER_VALIDATE_INT);
+$selectedSlot = null;
 
-if ($slotID !== false && $slotID !== null && $slotID > 0) {
-  $slotSelecionado = $slotDB->getSlotByID($slotID);
+if ($slotId !== false && $slotId !== null && $slotId > 0) {
+  $selectedSlot = $slotDb->getSlotByID($slotId);
 }
 
-$topicoPadrao = '';
-if ($usuarioLogado && method_exists($_SESSION['obj_user'], 'getDefaultReservationTopic')) {
-  $topicoPadrao = $_SESSION['obj_user']->getDefaultReservationTopic();
+$defaultTopic = '';
+if ($isUserLoggedIn && method_exists($_SESSION['obj_user'], 'getDefaultReservationTopic')) {
+  $defaultTopic = $_SESSION['obj_user']->getDefaultReservationTopic();
 }
 ?>
 <!DOCTYPE html>
@@ -34,21 +34,20 @@ if ($usuarioLogado && method_exists($_SESSION['obj_user'], 'getDefaultReservatio
     <a href="register/index.php">Register</a>
     <a href="../src/pcs_EndSession.php">logout</a>
     
-    <?php if ($usuarioLogado && $_SESSION['obj_user']->getCategory() === "coordenador"): ?>
+    <?php if ($isUserLoggedIn && $_SESSION['obj_user']->getCategory() === "coordenador"): ?>
       <a href="administration/home/home.php">administrar</a>
     <?php endif; ?>
     
-    <?php if ($usuarioLogado): ?>
+    <?php if ($isUserLoggedIn): ?>
       <img src="img/logado.png" alt="logado">
     <?php else: ?>
       <img src="img/nologado.png" alt="não logado">
     <?php endif; ?>
 
-    <main class="main-container<?= $slotSelecionado !== null ? ' has-selection' : '' ?>">
+    <main class="main-container<?= $selectedSlot !== null ? ' has-selection' : '' ?>">
       <section class="slots-section">
         <div class="section-heading">
           <div>
-            <span class="section-number">01</span>
             <h2>ESPAÇOS DISPONÍVEIS</h2>
           </div>
           <span class="section-label">SELECIONE UMA SALA</span>
@@ -76,19 +75,19 @@ if ($usuarioLogado && method_exists($_SESSION['obj_user'], 'getDefaultReservatio
         </div>
       </section>
 
-      <?php if ($slotSelecionado !== null): ?>
+      <?php if ($selectedSlot !== null): ?>
         <section class="slot-info">
           <div class="selected-slot-header">
             <div>
               <span class="selected-label">ESPAÇO SELECIONADO</span>
-              <h2><?= htmlspecialchars($slotSelecionado->getInstitutionalName(), ENT_QUOTES, 'UTF-8') ?></h2>
-              <p class="slot-name"><?= htmlspecialchars($slotSelecionado->getName(), ENT_QUOTES, 'UTF-8') ?></p>
+              <h2><?= htmlspecialchars($selectedSlot->getInstitutionalName(), ENT_QUOTES, 'UTF-8') ?></h2>
+              <p class="slot-name"><?= htmlspecialchars($selectedSlot->getName(), ENT_QUOTES, 'UTF-8') ?></p>
             </div>
           </div>
 
           <div class="description-card">
             <span class="card-label">DESCRIÇÃO</span>
-            <p><?= htmlspecialchars($slotSelecionado->getDescription(), ENT_QUOTES, 'UTF-8') ?></p>
+            <p><?= htmlspecialchars($selectedSlot->getDescription(), ENT_QUOTES, 'UTF-8') ?></p>
           </div>
 
           <div class="reserved-section">
@@ -128,7 +127,7 @@ if ($usuarioLogado && method_exists($_SESSION['obj_user'], 'getDefaultReservatio
             </div>
           </div>
 
-          <?php if ($usuarioLogado): ?>
+          <?php if ($isUserLoggedIn): ?>
             <div class="reservation-section">
               <div class="section-heading small-heading">
                 <div>
@@ -137,11 +136,11 @@ if ($usuarioLogado && method_exists($_SESSION['obj_user'], 'getDefaultReservatio
                 </div>
               </div>
               <form method="POST" action="../src/pcs_SlotReservation.php" class="reservation-form">
-                <input type="hidden" name="slot_id" value="<?= htmlspecialchars((string) $slotSelecionado->getId(), ENT_QUOTES, 'UTF-8') ?>">
+                <input type="hidden" name="slot_id" value="<?= htmlspecialchars((string) $selectedSlot->getId(), ENT_QUOTES, 'UTF-8') ?>">
                 <input type="hidden" name="user_email" value="<?= htmlspecialchars($_SESSION['obj_user']->getEmail(), ENT_QUOTES, 'UTF-8') ?>">
                 <div class="form-group">
                   <label for="topic">TÓPICO</label>
-                  <input type="text" id="topic" name="topic" value="<?= htmlspecialchars($topicoPadrao, ENT_QUOTES, 'UTF-8') ?>" required>
+                  <input type="text" id="topic" name="topic" value="<?= htmlspecialchars($defaultTopic, ENT_QUOTES, 'UTF-8') ?>" required>
                 </div>
                 <div class="form-row">
                   <div class="form-group">
