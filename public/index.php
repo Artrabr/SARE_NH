@@ -37,11 +37,13 @@ session_start();
     <div class="slot_info">
       <?php
         $slotDB = new SlotDB(Connection::Connect());
-        $slot = $slotDB->getSlotByID(1); // Replace 1 with the actual slot ID
+        $slots = $slotDB->getAllSlots();
 
-        $slotName = $slot->getName();
-        $slotInstitutionalName = $slot->getInstitutionalName();
-        $slotDescription = $slot->getDescription();
+        foreach($slots as $slot):
+          $slotID =  $slot->getId();// Replace 1 with the actual slot ID
+          $slotName = $slot->getName();
+          $slotInstitutionalName = $slot->getInstitutionalName();
+          $slotDescription = $slot->getDescription();
       ?>
       <div>
         <h1><strong>Sala <?= htmlspecialchars($slotInstitutionalName) ?></strong></h1>
@@ -97,6 +99,10 @@ session_start();
         </div>
       </div>
     </div>
+
+    <?php
+      endforeach;
+    ?>
 
     <div class="svg_background">
 

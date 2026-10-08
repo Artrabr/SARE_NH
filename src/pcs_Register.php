@@ -36,7 +36,7 @@ if(!checkData($_POST, $requiredFields)){
 if (!isEmailDomainAllowed($_POST['email'])) {
     header("Location: ../public/index.php?error=2");
     exit();
-}
+} 
 
 $pdo = connect();
 $userDB = new UserDB($pdo);
