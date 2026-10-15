@@ -4,7 +4,7 @@ require_once __DIR__ . "/User.php";
 
 class UserDB
 {
-    //BY:DAVI loxja 2026 ifsul
+    //BY:DAVI 2026 ifsul
     private PDO $pdo;
 
     public function __construct(PDO $pdo)
