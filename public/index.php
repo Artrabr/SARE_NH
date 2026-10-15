@@ -44,7 +44,6 @@ if ($isUserLoggedIn && method_exists($_SESSION['obj_user'], 'getDefaultReservati
       <img src="img/nologado.png" alt="não logado">
     <?php endif; ?>*/
     ?>
-
     <main class="main-container<?= $selectedSlot !== null ? ' has-selection' : '' ?>">
       <section class="slots-section">
         <div class="section-heading">
