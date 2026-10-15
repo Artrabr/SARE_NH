@@ -1,5 +1,32 @@
-ALTER TABLE reserved_slot
-    ADD COLUMN topic VARCHAR(255) NOT NULL,
-    ADD COLUMN start_time TIME NOT NULL,
-    ADD COLUMN end_time TIME NOT NULL,
-    ADD COLUMN reason VARCHAR(255) NULL;
+DROP DATABASE IF EXISTS sarenh;
+CREATE DATABASE sarenh;
+USE sarenh;
+
+CREATE TABLE User ( 
+    user_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    user_name VARCHAR(50) NOT NULL,
+    user_password VARCHAR(255) NOT NULL,
+    user_email VARCHAR(150) NOT NULL UNIQUE, -- 1. Adicionado UNIQUE
+    user_category VARCHAR(50) NOT NULL,
+    user_subject VARCHAR(50)
+);
+
+CREATE TABLE slot (
+    slot_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    slot_name VARCHAR(100) NOT NULL,
+    slot_institutional_name VARCHAR(150),
+    slot_description VARCHAR(500)  
+);
+
+CREATE TABLE reserved_slot (
+    user_id INT NOT NULL,
+    slot_id INT NOT NULL,
+    topic VARCHAR(255) NOT NULL,
+    start_time TIME NOT NULL,
+    end_time TIME NOT NULL,
+    reason VARCHAR(255),
+    reserved_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id, slot_id),
+    FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (slot_id) REFERENCES slot(slot_id) ON DELETE CASCADE
+);
