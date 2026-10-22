@@ -1,10 +1,9 @@
 <?php
-require_once __DIR__ . '/../../src/class/User/User.php';
-require_once __DIR__ . '/../../src/class/Teacher/Teacher.php';
-session_start();
-
-require_once __DIR__ . '/../../src/data/Connection.php';
-require_once __DIR__ . '/../../src/class/User/UserDB.php';
+require_once __DIR__ . '/../../bootstrap.php';
+require_once CLASS_PATH . 'User/User.php';
+require_once CLASS_PATH . 'Teacher/Teacher.php';
+require_once DATA_PATH . 'Connection.php';
+require_once CLASS_PATH . 'User/UserDB.php';
 
 function checkData($data, array $requiredFields){
     foreach($requiredFields as $field){
@@ -24,22 +23,6 @@ function connect(){
     return $pdo;
 }
 
-function insertData($pdo){
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-
-    $stmt = $pdo->prepare("SELECT user_password FROM `user` WHERE user_email = :user_email");
-    $stmt->bindParam(':user_email', $email);
-    $stmt->execute();
-    $hash = $stmt->fetchColumn();
-
-    if(password_verify($password, $hash)){
-        return true;
-    }
-    
-    return false;
-}
-
 function giveSession($pdo){
     $email = $_POST['email'];
     $db = new UserDB($pdo);
@@ -56,13 +39,13 @@ $requiredFields = ['email', 'password'];
 
 if(checkData($_POST, $requiredFields)){
     $pdo = connect();
-    $isValid = insertData($pdo);
-    if($isValid){
+    $db = new UserDB($pdo);
+    if($db->checkIfPasswordMatch($_POST['email'], $_POST['password'])){
         giveSession($pdo);
         disconnect();
-        header("Location: ../index.php?sucesso=true");
+        header('Location: ' . PUBLIC_URL . '/index.php?sucesso=true');
         exit();
     }
     disconnect();
 }
-header("Location: ../index.php?sucesso=false");
+header('Location: ' . PUBLIC_URL . '/index.php?sucesso=false');

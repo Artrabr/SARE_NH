@@ -1,6 +1,7 @@
 <?php
-require_once __DIR__ . '/../../../src/data/Connect.php';
-require_once __DIR__ . '/../../../src/class/user/UserDB.php';
+require_once __DIR__ . '/../../../bootstrap.php';
+require_once DATA_PATH . 'Connection.php';
+require_once CLASS_PATH . 'User/UserDB.php';
 
 $users = (new UserDB(Connection::Connect()))->getAllUsers();
 ?>

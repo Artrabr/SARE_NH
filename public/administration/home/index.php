@@ -1,7 +1,7 @@
 <?php
-    require_once __DIR__ . '/../../../src/class/user/User.php';
-    require_once __DIR__ . '/../../../src/class/Teacher/Teacher.php';
-    session_start();
+    require_once __DIR__ . '/../../../bootstrap.php';
+    require_once CLASS_PATH . 'User/User.php';
+    require_once CLASS_PATH . 'Teacher/Teacher.php';
 
     if (
         !isset($_SESSION['obj_user']) ||

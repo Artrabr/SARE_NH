@@ -57,6 +57,15 @@ class UserDB
         return null;
     }
 
+    public function checkIfPasswordMatch(string $email, string $password): bool
+    {
+        $stmt = $this->pdo->prepare("SELECT user_password FROM `user` WHERE user_email = ?");
+        $stmt->execute([$email]);
+        $hash = $stmt->fetchColumn();
+
+        return is_string($hash) && password_verify($password, $hash);
+    }
+
     public function createUser(string $name, string $email, string $password, string $category): ?User
     {
         $hashedPassword = password_hash($password, PASSWORD_BCRYPT);

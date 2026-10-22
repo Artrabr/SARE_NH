@@ -1,9 +1,9 @@
 <?php
-require_once __DIR__ . '/../src/class/user/User.php';
-require_once __DIR__ . '/../src/class/Teacher/Teacher.php';
-require_once __DIR__ . '/../src/class/Slot/SlotDB.php';
-require_once __DIR__ . '/../src/data/Connection.php';
-session_start();
+require_once __DIR__ . '/../bootstrap.php';
+require_once CLASS_PATH . 'User/User.php';
+require_once CLASS_PATH . 'Teacher/Teacher.php';
+require_once CLASS_PATH . 'Slot/SlotDB.php';
+require_once DATA_PATH . 'Connection.php';
 $isUserLoggedIn = isset($_SESSION['obj_user']);
 $slotDb = new SlotDB(Connection::Connect());
 $slots = $slotDb->getAllSlots();
@@ -35,15 +35,24 @@ if ($isUserLoggedIn && method_exists($_SESSION['obj_user'], 'getDefaultReservati
     <a href="pcs_EndSession.php">logout</a>
     
     <?php if ($isUserLoggedIn && $_SESSION['obj_user']->getCategory() === "coordenador"): ?>
-      <a href="administration/home/home.php">administrar</a>
-    <?php endif; 
+      <a href="administration/home/index.php">administrar</a>
+    <?php endif; ?> 
     
-    /*    <?php if ($isUserLoggedIn): ?>
+<?php //TESTE DE LOGIN
+  if(isset($_SESSION['obj_user'])):
+      $userName = $_SESSION['obj_user']->getName();
+      $email = $_SESSION['obj_user']->getEmail();
+      $category = $_SESSION['obj_user']->getCategory();
+    if ($isUserLoggedIn): ?>
       <img src="img/logado.png" alt="logado">
+      <p><?=$userName?></p>
+      <p><?=$email?></p>
+      <?php if($category):?> <p><?=$category?></p> <?php endif?>
     <?php else: ?>
       <img src="img/nologado.png" alt="não logado">
-    <?php endif; ?>*/
-    ?>
+    <?php endif; endif;
+//?>
+    
     <main class="main-container<?= $selectedSlot !== null ? ' has-selection' : '' ?>">
       <section class="slots-section">
         <div class="section-heading">
