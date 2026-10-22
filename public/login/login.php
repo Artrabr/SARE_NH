@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../register/register.css">
-    <link rel="stylesheet" href="../ifBrutal.css">
+    <link rel="stylesheet" href="../public_css/ifBrutal.css">
     <title>Página de Login</title>
 </head>
 <body>
@@ -12,7 +12,7 @@
     <section class="login-container">
         <img src="../midia/img/ifsullogo/ifsul-logo.png" alt="Logo do IFSul">
         <h1>Login</h1>
-        <form method="POST" action="../../src/pcs_login.php">
+        <form method="POST" action="pcs_Login.php">
             <label for="email" class="labels">Email:</label>
             <input id="email" type="text" name="email" placeholder="email" required>
 

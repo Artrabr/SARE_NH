@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="register.css">
-    <link rel="stylesheet" href="../ifBrutal.css">
+    <link rel="stylesheet" href="../public_css/ifBrutal.css">
     <title>Página de Registro</title>
 </head>
 <body>
     <section class="login-container">
         <img src="../midia/img/ifsullogo/ifsul-logo.png" alt="logo if">
         <h1>Registro</h1>
-        <form method="POST" action="../../src/pcs_Register.php">
+        <form method="POST" action="pcs_Register.php">
             <label for="username" class="labels">Username:</label>
             <input id="username" type="text" name="username" placeholder="Digite seu username" required>
 

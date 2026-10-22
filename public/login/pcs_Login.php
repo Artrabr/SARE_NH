@@ -1,10 +1,10 @@
 <?php
-require_once __DIR__ . '/class/User/User.php';
-require_once __DIR__ . '/class/Teacher/Teacher.php';
+require_once __DIR__ . '/../../src/class/User/User.php';
+require_once __DIR__ . '/../../src/class/Teacher/Teacher.php';
 session_start();
 
-require_once __DIR__ . '/data/Connection.php';
-require_once __DIR__ . '/class/User/UserDB.php';
+require_once __DIR__ . '/../../src/data/Connection.php';
+require_once __DIR__ . '/../../src/class/User/UserDB.php';
 
 function checkData($data, array $requiredFields){
     foreach($requiredFields as $field){
@@ -60,9 +60,9 @@ if(checkData($_POST, $requiredFields)){
     if($isValid){
         giveSession($pdo);
         disconnect();
-        header("Location: ../public/index.php?sucesso=true");
+        header("Location: ../index.php?sucesso=true");
         exit();
     }
     disconnect();
 }
-header("Location: ../public/index.php?sucesso=false");
+header("Location: ../index.php?sucesso=false");

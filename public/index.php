@@ -26,13 +26,13 @@ if ($isUserLoggedIn && method_exists($_SESSION['obj_user'], 'getDefaultReservati
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/x-icon" href=""><!--LOGO DO SITE-->
     <title>SARENH</title>
-    <link href="index_style.css" rel="stylesheet">
+    <link href="public_css/index_style.css" rel="stylesheet">
   </head>
   <body class="scroll">
   
     <a href="login/login.php">login</a><br>
     <a href="register/index.php">Register</a>
-    <a href="../src/pcs_EndSession.php">logout</a>
+    <a href="pcs_EndSession.php">logout</a>
     
     <?php if ($isUserLoggedIn && $_SESSION['obj_user']->getCategory() === "coordenador"): ?>
       <a href="administration/home/home.php">administrar</a>
@@ -54,7 +54,7 @@ if ($isUserLoggedIn && method_exists($_SESSION['obj_user'], 'getDefaultReservati
         </div>
         <div class="slot-grid">
           <?php foreach ($slots as $slot): ?>
-            <form method="POST" action="../src/pcs_InterestSlot.php" class="slot-card-form">
+            <form method="POST" action="pcs_InterestSlot.php" class="slot-card-form">
               <input type="hidden" name="slot_id" value="<?= htmlspecialchars((string) $slot->getId(), ENT_QUOTES, 'UTF-8') ?>">
               <button type="submit" class="slot-card">
                 <div class="slot-card-top">
@@ -135,7 +135,7 @@ if ($isUserLoggedIn && method_exists($_SESSION['obj_user'], 'getDefaultReservati
                   <h2>RESERVAR HORÁRIO</h2>
                 </div>
               </div>
-              <form method="POST" action="../src/pcs_SlotReservation.php" class="reservation-form">
+              <form method="POST" action="pcs_SlotReservation.php" class="reservation-form">
                 <input type="hidden" name="slot_id" value="<?= htmlspecialchars((string) $selectedSlot->getId(), ENT_QUOTES, 'UTF-8') ?>">
                 <input type="hidden" name="user_email" value="<?= htmlspecialchars($_SESSION['obj_user']->getEmail(), ENT_QUOTES, 'UTF-8') ?>">
                 <div class="form-group">
