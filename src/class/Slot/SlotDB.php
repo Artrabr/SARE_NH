@@ -30,6 +30,8 @@ class SlotDB
 
     public function getSlotByInstitutionalName(string $institutionalName): ?Slot
     {
+        $institutionalName = strtolower($institutionalName);
+        
         $stmt = $this->pdo->prepare("SELECT slot_id, slot_name, slot_institutional_name, slot_description FROM `slot` WHERE slot_institutional_name = ?");
         $stmt->execute([$institutionalName]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);

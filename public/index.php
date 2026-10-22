@@ -18,6 +18,16 @@ $defaultTopic = '';
 if ($isUserLoggedIn && method_exists($_SESSION['obj_user'], 'getDefaultReservationTopic')) {
   $defaultTopic = $_SESSION['obj_user']->getDefaultReservationTopic();
 }
+
+//----------------Manipulação-do-dado-em-php----------------->
+$selecionado = null;
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content']) && is_string($_POST['content'])) {
+  $selecionado = trim($_POST['content']);
+  if ($selecionado !== '') {
+    $selectedSlot = $slotDb->getSlotByInstitutionalName($selecionado);
+  }
+}
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -154,6 +164,10 @@ if ($isUserLoggedIn && method_exists($_SESSION['obj_user'], 'getDefaultReservati
               <a href="login/login.php" class="warning-button">FAZER LOGIN →</a>
             </div>
           <?php endif; ?>
+        </section>
+      <?php elseif ($selecionado !== null): ?>
+        <section class="slot-info">
+          <p>O espaço selecionado não foi encontrado.</p>
         </section>
       <?php endif; ?>
     </main>
@@ -402,15 +416,6 @@ if ($isUserLoggedIn && method_exists($_SESSION['obj_user'], 'getDefaultReservati
          y="174.35834">b2-01</tspan></text>
   </g>
 </svg>
-
-<?php
-//----------------Manipulação-do-dado-em-php----------------->
-        if($_SERVER['REQUEST_METHOD'] == 'POST'){
-            $selecionado = htmlspecialchars($_POST['content']);
-            echo '<p class="selection-result">Forma selecionada: ' . $selecionado . '</p>';
-        }
-?>
-
 <!--regiao-- MANIPULAÇÃO DO SVG -->
   <!------------Recebimento de dados do js > php--------------->
     <form id="formSelection" action="index.php" method="post"> 
@@ -423,7 +428,7 @@ if ($isUserLoggedIn && method_exists($_SESSION['obj_user'], 'getDefaultReservati
     <script>
   //------------------Tomada-de-dados-do-DOM------------------->
 
-      //---------------variaveis------------------  inkscape:label="convivnecia" />
+      //---------------variaveis------------------/>
       const r5 =  document.getElementById("rect5");
       const r6 =  document.getElementById("rect6");
       const r7 =  document.getElementById("rect7");
@@ -447,6 +452,9 @@ if ($isUserLoggedIn && method_exists($_SESSION['obj_user'], 'getDefaultReservati
               //declarar os objetos em constantes:
               const target = document.getElementById("Selected");
               const submitForm = document.getElementById("formSelection");
+
+              console.log(target);
+              console.log(submitForm);
               
 
               // basedo no id do <rect>  do  sgv  pegamos o
