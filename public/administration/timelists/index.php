@@ -6,11 +6,13 @@
 
     require_once CLASS_PATH . 'Reservation/ReservationDB.php';
     require_once CLASS_PATH . 'Slot/SlotDB.php';
+    require_once CLASS_PATH . 'User/UserDB.php';
     require_once DATA_PATH . 'Connection.php';
 
     $pdo = Connection::Connect();
     $reservationDB = new ReservationDB($pdo);
     $reservations = $reservationDB->getAllReservation();
+    $userDB = new UserDB($pdo);
 
     $slotDB = new SlotDB($pdo);
     $slotsById = [];
@@ -51,11 +53,10 @@
                         <?php else: ?>
                             <?php foreach ($reservations as $reservation):
                                 $userID = $reservation->getUserId();
-                                $userDB = new UserDB($pdo);
-                                $user   = $userDB->getUserByID($userID);
+                                $user = $userDB->getUserByID($userID);
                             ?>
                                 <tr>
-                                    <td><?= htmlspecialchars($user->getName(), ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td><?= htmlspecialchars($user ? $user->getName() : 'Usuário não encontrado', ENT_QUOTES, 'UTF-8') ?></td>
                                     <td><?= htmlspecialchars($slotsById[$reservation->getSlot()] ?? 'Sala não encontrada', ENT_QUOTES, 'UTF-8') ?></td>
                                     <td><?= htmlspecialchars($reservation->getTopic(), ENT_QUOTES, 'UTF-8') ?></td>
                                     <td><?= htmlspecialchars(substr($reservation->getStartTime(), 0, 5), ENT_QUOTES, 'UTF-8') ?></td>
@@ -70,6 +71,8 @@
                 </table>
             </div>
         </section>
+
+        <a href="../index.php">Voltar para o painel administrativo</a>
     </main>
 </body>
 </html>
