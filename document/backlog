@@ -1,0 +1,225 @@
+Backlog — SARENH: Painel administrativo e mapa do campus
+1. Introdução
+Este backlog contempla as tarefas necessárias para aprimorar a interface administrativa do SARENH e reformular a representação visual do campus.
+O objetivo é estabelecer uma identidade visual consistente com as telas existentes, utilizando o estilo neo-brutalista de maneira mais profissional, além de desenvolver uma representação visual do campus que facilite a identificação e o gerenciamento das salas.
+As tarefas estão organizadas por funcionalidade, com prioridade, dificuldade e estimativa de esforço.
+Critérios de classificação
+Dificuldade: Mínima, Baixa, Média, Alta ou Altíssima.
+Prioridade: Alta, Média ou Baixa.
+Estimativa: pontos de esforço relativos à complexidade da tarefa, não horas de trabalho.
+
+2. Painel administrativo
+PA1 — Estrutura visual do painel administrativo
+História de usuário:
+Como administrador, quero acessar um painel organizado para encontrar rapidamente as funcionalidades de gerenciamento do sistema.
+Descrição:
+Desenvolver a estrutura visual principal do painel administrativo, incluindo menu lateral, cabeçalho, área de conteúdo e identificação do administrador.
+Critérios de aceitação:
+O painel deve apresentar uma navegação lateral com acesso às principais funcionalidades.
+O cabeçalho deve identificar a página atual e o administrador.
+A estrutura deve manter consistência visual com as demais páginas do SARENH.
+A interface deve utilizar o estilo neo-brutalista com bordas marcadas, sombras discretas e cores institucionais.
+O conteúdo deve se adaptar a diferentes resoluções de tela.
+Prioridade: Alta
+Dificuldade: Média
+Estimativa: 3 pontos
+
+PA2 — Navegação administrativa
+História de usuário:
+Como administrador, quero navegar entre as funcionalidades administrativas por meio de um menu organizado.
+Descrição:
+Implementar os links de navegação para as páginas de gerenciamento de horários, registros de salas, usuários e professores, além da visão geral do painel.
+Critérios de aceitação:
+Todas as opções devem direcionar para suas respectivas páginas.
+A página atual deve possuir um indicador visual de seleção.
+As opções devem respeitar as permissões de acesso do usuário.
+O menu deve permanecer consistente entre as páginas administrativas.
+Prioridade: Alta
+Dificuldade: Baixa
+Estimativa: 2 pontos
+
+PA3 — Visão geral administrativa
+História de usuário:
+Como administrador, quero visualizar um resumo do sistema para compreender rapidamente sua situação atual.
+Descrição:
+Criar uma página inicial administrativa com informações resumidas sobre salas, horários e usuários cadastrados.
+Critérios de aceitação:
+A página deve apresentar informações relevantes ao gerenciamento do sistema.
+Os indicadores devem utilizar dados reais obtidos do banco de dados.
+Os números exibidos devem corresponder aos registros existentes.
+A página deve disponibilizar acesso rápido às principais funcionalidades.
+Não devem ser apresentados dados fictícios como se fossem informações reais.
+Prioridade: Média
+Dificuldade: Média
+Estimativa: 3 pontos
+
+3. Reformulação do mapa do campus
+MC1 — Levantamento e planejamento visual do campus
+História de usuário:
+Como usuário do SARENH, quero visualizar uma representação compreensível do campus para identificar as salas disponíveis.
+Descrição:
+Analisar a representação atual do campus e definir uma nova proposta visual antes da implementação do mapa definitivo.
+Critérios de aceitação:
+Identificar os espaços que precisam aparecer no mapa.
+Definir a disposição aproximada dos prédios, salas e áreas de circulação.
+Estabelecer uma escala visual consistente entre os elementos.
+Definir uma legenda para identificação das salas e seus estados.
+Validar a proposta visual com o cliente antes de iniciar a implementação definitiva.
+Prioridade: Alta
+Dificuldade: Média
+Estimativa: 3 pontos
+
+MC2 — Redesenho do mapa em SVG
+História de usuário:
+Como usuário do SARENH, quero visualizar um mapa organizado e compreensível do campus para localizar os espaços que desejo consultar.
+Descrição:
+Reformular a representação do campus utilizando SVG, substituindo o desenho provisório por uma composição visual mais organizada e coerente com a disposição dos espaços físicos.
+Critérios de aceitação:
+O desenho deve representar a disposição dos espaços definida durante o planejamento.
+Os elementos devem apresentar proporções e alinhamentos consistentes.
+Cada sala deve possuir identificação legível.
+O mapa deve manter boa legibilidade em diferentes tamanhos de tela.
+Os elementos que representam salas devem permitir interação individual.
+O código SVG deve possuir uma estrutura organizada que facilite futuras alterações.
+Prioridade: Alta
+Dificuldade: Alta
+Estimativa: 5 pontos
+
+MC3 — Integração das salas com o mapa
+História de usuário:
+Como usuário do SARENH, quero que cada espaço representado no mapa corresponda a uma sala cadastrada no sistema.
+Descrição:
+Associar os elementos gráficos do mapa aos registros de salas armazenados no banco de dados.
+Critérios de aceitação:
+Cada sala representada deve possuir uma identificação associada ao seu registro.
+A seleção de uma sala deve recuperar os dados correspondentes.
+As informações exibidas devem ser provenientes do sistema, sem depender de textos fixos no SVG.
+Salas cadastradas, alteradas ou removidas devem ser tratadas de forma consistente pela aplicação.
+A ausência de dados de uma sala não deve causar falhas na página.
+Prioridade: Alta
+Dificuldade: Alta
+Estimativa: 5 pontos
+
+MC4 — Identificação visual da disponibilidade das salas
+História de usuário:
+Como usuário do SARENH, quero identificar visualmente a situação das salas para compreender sua disponibilidade.
+Descrição:
+Implementar indicadores visuais associados aos estados das salas, respeitando os dados de reservas e eventuais bloqueios administrativos.
+Critérios de aceitação:
+O mapa deve apresentar uma legenda para os estados das salas.
+Os estados devem refletir os dados reais do sistema.
+A disponibilidade deve considerar o período ou horário consultado.
+Salas bloqueadas devem ser diferenciadas das salas disponíveis.
+A identificação dos estados não deve depender exclusivamente das cores.
+Prioridade: Alta
+Dificuldade: Média
+Estimativa: 3 pontos
+
+MC5 — Seleção e visualização dos detalhes da sala
+História de usuário:
+Como usuário do SARENH, quero selecionar uma sala no mapa para consultar suas informações.
+Descrição:
+Implementar a interação entre o mapa e um componente de detalhes que apresente as informações da sala selecionada.
+Critérios de aceitação:
+Ao selecionar uma sala, devem ser exibidas suas informações relevantes.
+O componente deve apresentar o nome ou código da sala e seu estado atual.
+Quando aplicável, devem ser exibidos os horários e as informações de reserva.
+Deve ser possível trocar a sala selecionada sem recarregar desnecessariamente a página.
+A seleção atual deve possuir um indicador visual claro.
+Prioridade: Alta
+Dificuldade: Média
+Estimativa: 3 pontos
+
+4. Gerenciamento administrativo das salas
+GS1 — Consulta administrativa dos dados da sala
+História de usuário:
+Como administrador, quero consultar os dados de uma sala para verificar suas informações cadastradas.
+Descrição:
+Disponibilizar, no painel administrativo, uma visualização detalhada das informações associadas à sala selecionada.
+Critérios de aceitação:
+Exibir os dados cadastrados da sala.
+Permitir a consulta dos horários relacionados.
+Exibir informações de bloqueios, quando existentes.
+Diferenciar dados ausentes de informações inválidas.
+Respeitar as permissões de acesso administrativo.
+Prioridade: Alta
+Dificuldade: Média
+Estimativa: 3 pontos
+
+GS2 — Edição dos dados das salas
+História de usuário:
+Como administrador, quero editar os dados das salas para manter o cadastro atualizado.
+Descrição:
+Implementar a funcionalidade de alteração dos dados permitidos de uma sala, com validação e persistência no banco de dados.
+Critérios de aceitação:
+O formulário deve apresentar os dados atuais da sala.
+Os campos devem ser validados antes da gravação.
+As alterações devem ser persistidas no banco de dados.
+O sistema deve informar o resultado da operação.
+O mapa deve refletir as alterações que afetam a identificação ou apresentação da sala.
+Prioridade: Média
+Dificuldade: Alta
+Estimativa: 5 pontos
+
+GS3 — Bloqueio e liberação administrativa de salas
+História de usuário:
+Como administrador, quero bloquear ou liberar uma sala para controlar sua utilização conforme as necessidades do campus.
+Descrição:
+Implementar controles administrativos para alterar a disponibilidade operacional de uma sala, considerando situações como manutenção ou restrições de uso.
+Critérios de aceitação:
+O administrador deve conseguir bloquear e liberar uma sala.
+O sistema deve registrar o estado atualizado no banco de dados.
+A interface deve apresentar o estado vigente.
+Uma sala bloqueada não deve ser oferecida para novas reservas incompatíveis com o bloqueio.
+As regras de bloqueio devem ser compatíveis com as reservas já existentes.
+Prioridade: Média
+Dificuldade: Alta
+Estimativa: 5 pontos
+
+5. Validação e acabamento
+QA1 — Responsividade e consistência visual
+História de usuário:
+Como usuário do SARENH, quero utilizar as páginas em diferentes tamanhos de tela sem perder informações ou funcionalidades.
+Descrição:
+Revisar a adaptação do painel administrativo, dos formulários e do mapa às diferentes resoluções.
+Critérios de aceitação:
+Não deve haver sobreposição indevida de componentes.
+Os textos e controles devem permanecer legíveis.
+O mapa deve permitir a identificação dos espaços em telas menores.
+Os formulários devem continuar utilizáveis.
+O estilo visual deve permanecer consistente entre as páginas.
+Prioridade: Média
+Dificuldade: Média
+Estimativa: 3 pontos
+
+QA2 — Testes das funcionalidades administrativas
+História de usuário:
+Como administrador, quero que as funcionalidades do painel operem corretamente para evitar inconsistências no gerenciamento do sistema.
+Descrição:
+Executar testes das operações administrativas e da integração entre o mapa, os registros das salas e os horários.
+Critérios de aceitação:
+Verificar o acesso às páginas administrativas.
+Testar a consulta e a edição dos dados das salas.
+Verificar a atualização dos estados no mapa.
+Testar os casos de dados ausentes e operações inválidas.
+Confirmar que usuários sem permissão não conseguem executar operações administrativas.
+Corrigir os erros identificados durante os testes.
+Prioridade: Alta
+Dificuldade: Média
+Estimativa: 3 pontos
+
+6. Ordem recomendada de execução
+PA1 e PA2: estabelecer a estrutura e a navegação do painel.
+MC1: planejar e validar a nova representação do campus.
+MC2: implementar o novo desenho do mapa.
+MC3: associar as salas do mapa aos registros do sistema.
+MC4 e MC5: implementar os estados visuais e a seleção de salas.
+PA3: desenvolver a visão geral com dados reais.
+GS1, GS2 e GS3: implementar as operações administrativas necessárias.
+QA1 e QA2: validar o funcionamento e realizar os ajustes finais.
+7. Observações
+A reformulação do mapa deve ser validada visualmente antes da implementação completa.
+As funcionalidades de edição e bloqueio devem respeitar as regras de negócio existentes.
+As estimativas podem ser ajustadas após a análise do código atual e das estruturas do banco de dados.
+As tarefas podem ser divididas em subtarefas menores caso a equipe identifique dependências ou complexidades adicionais durante o desenvolvimento.
+
