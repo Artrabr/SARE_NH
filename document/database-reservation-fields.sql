@@ -19,14 +19,15 @@ CREATE TABLE slot (
 );
 
 CREATE TABLE reserved_slot (
-    user_id INT NOT NULL,
-    slot_id INT NOT NULL,
-    topic VARCHAR(255) NOT NULL,
-    start_time TIME NOT NULL,
-    end_time TIME NOT NULL,
-    reason VARCHAR(255),
-    reserved_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (user_id, slot_id),
-    FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE,
-    FOREIGN KEY (slot_id) REFERENCES slot(slot_id) ON DELETE CASCADE
+    reserved_slot_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    reserved_slot_user_id INT NOT NULL,
+    reserved_slot_slot_id INT NOT NULL,
+    reserved_slot_topic VARCHAR(255) NOT NULL,
+    reserved_slot_start_time TIME NOT NULL,
+    reserved_slot_end_time TIME NOT NULL,
+    reserved_slot_date DATE NOT NULL,
+    reserved_slot_reason VARCHAR(255),
+    reserved_slot_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (reserved_slot_user_id) REFERENCES User(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (reserved_slot_slot_id) REFERENCES slot(slot_id) ON DELETE CASCADE
 );

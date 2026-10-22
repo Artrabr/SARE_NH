@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content']) && is_stri
     <a href="pcs_EndSession.php">logout</a>
     
     <?php if ($isUserLoggedIn && $_SESSION['obj_user']->getCategory() === "coordenador"): ?>
-      <a href="administration/home/index.php">administrar</a>
+      <a href="administration/index.php">administrar</a>
     <?php endif; ?> 
     
 <?php /*TESTE DE LOGIN
@@ -149,6 +149,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content']) && is_stri
                     <label for="end_time">HORA DE TÉRMINO</label>
                     <input type="time" id="end_time" name="end_time" required>
                   </div>
+                </div>
+                <div class="form-group">
+                  <label for="reservation_date">DATA</label>
+                  <input type="date" id="reservation_date" name="reservation_date" required>
                 </div>
                 <div class="form-group">
                   <label for="reason">MOTIVO</label>

@@ -17,6 +17,7 @@ class ReservationDB
         string $topic,
         string $startTime,
         string $endTime,
+        string $reservationDate,
         ?string $reason
     ): Reservation {
         if ($slotId < 1 || trim($topic) == '') {
@@ -38,8 +39,23 @@ class ReservationDB
         }
 
         $stmt = $this->pdo->prepare(
-            'INSERT INTO `reserved_slot` (user_id, slot_id, topic, start_time, end_time, reason)
-             VALUES (:user_id, :slot_id, :topic, :start_time, :end_time, :reason)'
+            'INSERT INTO `reserved_slot` (
+                reserved_slot_user_id,
+                reserved_slot_slot_id,
+                reserved_slot_topic,
+                reserved_slot_start_time,
+                reserved_slot_end_time,
+                reserved_slot_date,
+                reserved_slot_reason
+             ) VALUES (
+                :user_id,
+                :slot_id,
+                :topic,
+                :start_time,
+                :end_time,
+                :reservation_date,
+                :reason
+             )'
         );
         $stmt->execute([
             'user_id' => (int) $userId,
@@ -47,13 +63,15 @@ class ReservationDB
             'topic' => trim($topic),
             'start_time' => $startTime,
             'end_time' => $endTime,
+            'reservation_date' => $reservationDate,
             'reason' => $reason,
         ]);
 
+        $reservationId = (int) $this->pdo->lastInsertId();
         $reservationStmt = $this->pdo->prepare(
-            'SELECT reserved_at FROM `reserved_slot` WHERE user_id = ? AND slot_id = ?'
+            'SELECT reserved_slot_at FROM `reserved_slot` WHERE reserved_slot_id = ?'
         );
-        $reservationStmt->execute([(int) $userId, $slotId]);
+        $reservationStmt->execute([$reservationId]);
         $reservedAt = $reservationStmt->fetchColumn();
 
         if ($reservedAt === false) {
@@ -67,6 +85,7 @@ class ReservationDB
             trim($topic),
             $startTime,
             $endTime,
+            $reservationDate,
             $reason,
             $reservedAt
         );
@@ -75,14 +94,14 @@ class ReservationDB
     public function getReservationById(int $id): ?Reservation
     {
         $stmt = $this->pdo->prepare(
-            'SELECT reserved_slot.user_id, `user`.user_email, reserved_slot.slot_id,
-                    reserved_slot.topic, reserved_slot.start_time, reserved_slot.end_time,
-                    reserved_slot.reason, reserved_slot.reserved_at
+            'SELECT reserved_slot.reserved_slot_user_id, `user`.user_email,
+                    reserved_slot.reserved_slot_slot_id, reserved_slot.reserved_slot_topic,
+                    reserved_slot.reserved_slot_start_time, reserved_slot.reserved_slot_end_time,
+                    reserved_slot.reserved_slot_date, reserved_slot.reserved_slot_reason,
+                    reserved_slot.reserved_slot_at
              FROM `reserved_slot`
-             JOIN `user` ON `user`.user_id = reserved_slot.user_id
-             WHERE reserved_slot.user_id = ?
-             ORDER BY reserved_slot.reserved_at DESC
-             LIMIT 1'
+             JOIN `user` ON `user`.user_id = reserved_slot.reserved_slot_user_id
+             WHERE reserved_slot.reserved_slot_id = ?'
         );
         $stmt->execute([$id]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -92,14 +111,46 @@ class ReservationDB
         }
 
         return new Reservation(
-            (int) $row['user_id'],
+            (int) $row['reserved_slot_user_id'],
             $row['user_email'],
-            (int) $row['slot_id'],
-            $row['topic'],
-            $row['start_time'],
-            $row['end_time'],
-            $row['reason'],
-            $row['reserved_at']
+            (int) $row['reserved_slot_slot_id'],
+            $row['reserved_slot_topic'],
+            $row['reserved_slot_start_time'],
+            $row['reserved_slot_end_time'],
+            $row['reserved_slot_date'],
+            $row['reserved_slot_reason'],
+            $row['reserved_slot_at']
         );
+    }
+
+    public function getAllReservation(): array
+    {
+        $stmt = $this->pdo->query(
+            'SELECT reserved_slot.reserved_slot_user_id, `user`.user_email,
+                    reserved_slot.reserved_slot_slot_id, reserved_slot.reserved_slot_topic,
+                    reserved_slot.reserved_slot_start_time, reserved_slot.reserved_slot_end_time,
+                    reserved_slot.reserved_slot_date, reserved_slot.reserved_slot_reason,
+                    reserved_slot.reserved_slot_at
+             FROM `reserved_slot`
+             JOIN `user` ON `user`.user_id = reserved_slot.reserved_slot_user_id
+             ORDER BY reserved_slot.reserved_slot_date, reserved_slot.reserved_slot_start_time'
+        );
+
+        $reservations = [];
+        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
+            $reservations[] = new Reservation(
+                (int) $row['reserved_slot_user_id'],
+                $row['user_email'],
+                (int) $row['reserved_slot_slot_id'],
+                $row['reserved_slot_topic'],
+                $row['reserved_slot_start_time'],
+                $row['reserved_slot_end_time'],
+                $row['reserved_slot_date'],
+                $row['reserved_slot_reason'],
+                $row['reserved_slot_at']
+            );
+        }
+
+        return $reservations;
     }
 }

@@ -29,7 +29,7 @@ function connect(){
 //         CÓDIGO
 //-------------------------
 
-$requiredFields = ['slot_id','user_email','topic','start_time','end_time','reason'];
+$requiredFields = ['slot_id','user_email','topic','start_time','end_time','reservation_date','reason'];
 
 if(!checkData($_POST, $requiredFields)){
     header('Location: ' . PUBLIC_URL . '/index.php?faltadecampos=true');
@@ -39,7 +39,15 @@ if(!checkData($_POST, $requiredFields)){
 $pdo = connect();
 
 $db = new ReservationDB($pdo);
-$reservation = $db->createReservation($_POST['user_email'], (int) $_POST['slot_id'], $_POST['topic'], $_POST['start_time'], $_POST['end_time'], $_POST['reason']);
+$reservation = $db->createReservation(
+    $_POST['user_email'],
+    (int) $_POST['slot_id'],
+    $_POST['topic'],
+    $_POST['start_time'],
+    $_POST['end_time'],
+    $_POST['reservation_date'],
+    $_POST['reason']
+);
 
 disconnect($pdo);
 header('Location: ' . PUBLIC_URL . '/index.php?sucesso=true');

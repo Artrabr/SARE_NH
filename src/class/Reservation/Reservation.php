@@ -9,6 +9,7 @@ class Reservation
         private string $topic,
         private string $startTime,
         private string $endTime,
+        private string $reservationDate,
         private ?string $reason,
         private string $reservedAt
     ) {
@@ -42,6 +43,11 @@ class Reservation
     public function getEndTime(): string
     {
         return $this->endTime;
+    }
+
+    public function getReservationDate(): string
+    {
+        return $this->reservationDate;
     }
 
     public function getReason(): ?string
