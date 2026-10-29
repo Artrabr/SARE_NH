@@ -1,11 +1,32 @@
 :root {
-  color-scheme: dark;
-  --bg: #0b1120;
-  --panel: #151e30;
-  --border: #30415b;
-  --text: #e5edf9;
-  --muted: #91a2bc;
-  --accent: #60a5fa;
+  color-scheme: light;
+  --color-pine: #2A3A2B;
+  --color-forest: #4C6A4D;
+  --color-sage: #88A06D;
+  --color-sand: #CBB98A;
+  --color-cream: #F4F0E2;
+
+  --bg: var(--color-cream);
+  --panel: var(--color-cream);
+  --border: var(--color-pine);
+  --text: var(--color-pine);
+  --muted: var(--color-forest);
+  --accent: var(--color-forest);
+  --accent-hover: var(--color-pine);
+  --ink: var(--color-pine);
+  --surface: var(--color-cream);
+  --map-bg: var(--color-cream);
+  --room-fill: var(--color-sage);
+  --room-hover-fill: var(--color-forest);
+  --room-selected-fill: var(--color-forest);
+  --room-stroke: var(--color-pine);
+  --accent-label: var(--color-forest);
+  --on-accent: var(--color-cream);
+  --overlay: rgb(42 58 43 / 75%);
+  --shadow-soft: rgb(42 58 43 / 20%);
+  --shadow-strong: rgb(42 58 43 / 45%);
+  --focus-glow: rgb(136 160 109 / 30%);
+  --hard-shadow: 5px 5px 0 var(--ink);
 }
 
 * {
@@ -47,12 +68,12 @@ a {
   display: block;
   width: 100vw;
   height: 100vh;
-  background: #f1f5f9;
+  background: var(--map-bg);
 }
 
 #campus-map .room {
-  fill: #dce7f2 !important;
-  stroke: #475569 !important;
+  fill: var(--room-fill) !important;
+  stroke: var(--room-stroke) !important;
   stroke-width: 1.2 !important;
   vector-effect: non-scaling-stroke;
   cursor: pointer;
@@ -61,13 +82,13 @@ a {
 
 #campus-map .room:hover,
 #campus-map .room:focus {
-  fill: #93c5fd !important;
+  fill: var(--room-hover-fill) !important;
   outline: none;
 }
 
 #campus-map .room.selected {
-  fill: #86efac !important;
-  stroke: #15803d !important;
+  fill: var(--room-selected-fill) !important;
+  stroke: var(--room-stroke) !important;
 }
 
 #campus-map text {
@@ -81,8 +102,8 @@ a {
   position: fixed;
   z-index: 30;
   border: 1px solid var(--border);
-  background: rgb(11 17 32 / 90%);
-  box-shadow: 0 8px 30px rgb(0 0 0 / 20%);
+  background: var(--panel);
+  box-shadow: 0 8px 30px var(--shadow-soft);
   backdrop-filter: blur(12px);
 }
 
@@ -121,7 +142,7 @@ a {
 
 .site-links a:hover,
 .site-links a:focus-visible {
-  background: #334b6b;
+  background: var(--accent-hover);
 }
 
 .map-controls {
@@ -146,7 +167,7 @@ a {
 
 .map-controls button:hover,
 .map-controls button:focus-visible {
-  background: #334b6b;
+  background: var(--accent-hover);
 }
 
 .map-hint {
@@ -175,7 +196,7 @@ a {
   position: fixed;
   z-index: 0;
   inset: 0;
-  background: rgb(2 6 23 / 75%);
+  background: var(--overlay);
   content: "";
   opacity: 0;
   pointer-events: none;
@@ -194,8 +215,8 @@ a {
   padding: 17px 19px;
   border: 1px solid var(--border);
   border-radius: 13px;
-  background: rgb(11 17 32 / 92%);
-  box-shadow: 0 8px 30px rgb(0 0 0 / 20%);
+  background: var(--panel);
+  box-shadow: 0 8px 30px var(--shadow-soft);
   pointer-events: auto;
 }
 
@@ -245,10 +266,10 @@ a {
   max-height: calc(100vh - 36px);
   overflow-y: auto;
   padding: 25px;
-  border: 1px solid #344762;
+  border: 1px solid var(--border);
   border-radius: 18px;
-  background: #131e30;
-  box-shadow: 0 25px 90px rgb(0 0 0 / 45%);
+  background: var(--panel);
+  box-shadow: 0 25px 90px var(--shadow-strong);
   pointer-events: auto;
   transform: translate(-50%, -50%);
 }
@@ -288,22 +309,22 @@ a {
 
 .close-button:hover,
 .close-button:focus-visible {
-  background: #334b6b;
+  background: var(--accent-hover);
 }
 
 .description-card,
 .login-warning {
   margin-bottom: 20px;
   padding: 15px;
-  border: 1px solid rgb(96 165 250 / 25%);
+  border: 1px solid var(--focus-glow);
   border-radius: 11px;
-  background: rgb(96 165 250 / 8%);
+  background: var(--surface);
 }
 
 .description-card p,
 .login-warning p {
   margin: 8px 0 0;
-  color: #c5d2e5;
+  color: var(--text);
   line-height: 1.5;
 }
 
@@ -363,8 +384,8 @@ a {
   flex-shrink: 0;
   place-items: center;
   border-radius: 50%;
-  background: #263c59;
-  color: #bfdbfe;
+  background: var(--accent);
+  color: var(--on-accent);
 }
 
 .user-info strong,
@@ -389,7 +410,7 @@ a {
 }
 
 .form-group label {
-  color: #c5d2e5;
+  color: var(--text);
   font-size: 0.75rem;
 }
 
@@ -400,13 +421,13 @@ a {
   border: 1px solid var(--border);
   border-radius: 9px;
   outline: none;
-  background: #0c1526;
+  background: var(--surface);
   color: var(--text);
 }
 
 .form-group input:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgb(96 165 250 / 12%);
+  box-shadow: 0 0 0 3px var(--focus-glow);
 }
 
 .form-row {
@@ -425,7 +446,7 @@ a {
   border: 1px solid var(--accent);
   border-radius: 9px;
   background: var(--accent);
-  color: #081426;
+  color: var(--on-accent);
   font-weight: 700;
   text-decoration: none;
   cursor: pointer;
@@ -531,5 +552,212 @@ a {
 
   .form-row {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Neo-brutalist interface; the map's room styles above remain unchanged. */
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.site-nav,
+.map-controls,
+.map-hint,
+.slots-section,
+.slot-info {
+  border: 3px solid var(--ink);
+  border-radius: 0;
+  background: var(--panel);
+  box-shadow: var(--hard-shadow);
+  backdrop-filter: none;
+}
+
+.site-nav {
+  padding: 10px 13px;
+}
+
+.site-brand,
+.map-hint strong,
+.section-label,
+.selected-label,
+.card-label,
+.section-number {
+  color: var(--accent-label);
+}
+
+.site-brand {
+  font-weight: 900;
+  letter-spacing: 0.06em;
+}
+
+.site-links a {
+  border: 2px solid var(--ink);
+  border-radius: 0;
+  background: var(--accent);
+  box-shadow: 2px 2px 0 var(--ink);
+  color: var(--on-accent);
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.site-links a:hover,
+.site-links a:focus-visible {
+  background: var(--accent-hover);
+  color: var(--on-accent);
+  transform: translate(2px, 2px);
+  box-shadow: none;
+}
+
+.map-controls {
+  gap: 7px;
+  padding: 7px;
+}
+
+.map-controls button,
+.reserve-button,
+.warning-button,
+.close-button {
+  border: 3px solid var(--ink);
+  border-radius: 0;
+  background: var(--accent);
+  box-shadow: 3px 3px 0 var(--ink);
+  color: var(--on-accent);
+  font-weight: 900;
+}
+
+.map-controls button:hover,
+.map-controls button:focus-visible,
+.close-button:hover,
+.close-button:focus-visible,
+.reserve-button:hover,
+.warning-button:hover {
+  background: var(--accent-hover);
+  color: var(--on-accent);
+  filter: none;
+  transform: translate(3px, 3px);
+  box-shadow: none;
+}
+
+.map-hint {
+  color: var(--text);
+}
+
+.slots-section {
+  padding: 18px 20px;
+}
+
+.section-heading h2,
+.selected-slot-header h2,
+.small-heading h2 {
+  font-weight: 900;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+.section-heading p,
+.slot-name,
+.description-card p,
+.login-warning p,
+.user-info span {
+  color: var(--muted);
+}
+
+.slot-info {
+  border-color: var(--ink);
+  background: var(--panel);
+}
+
+.selected-slot-header {
+  border-bottom: 3px solid var(--ink);
+  padding-bottom: 15px;
+}
+
+.description-card,
+.login-warning {
+  border: 3px solid var(--ink);
+  border-radius: 0;
+  background: var(--surface);
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+.description-card p,
+.login-warning p {
+  color: var(--text);
+}
+
+.table-wrapper {
+  border: 3px solid var(--ink);
+  border-radius: 0;
+  background: var(--surface);
+}
+
+.reservation-table th,
+.reservation-table td {
+  border-bottom: 2px solid var(--ink);
+}
+
+.reservation-table th {
+  background: var(--accent);
+  color: var(--on-accent);
+  font-weight: 900;
+}
+
+.user-avatar {
+  border: 2px solid var(--ink);
+  border-radius: 0;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-weight: 900;
+}
+
+.form-group label {
+  color: var(--text);
+  font-weight: 800;
+}
+
+.form-group input {
+  border: 2px solid var(--ink);
+  border-radius: 0;
+  background: var(--surface);
+  box-shadow: 2px 2px 0 var(--ink);
+  color: var(--text);
+}
+
+.form-group input:focus {
+  border-color: var(--ink);
+  outline: 3px solid var(--accent);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+.reserve-button,
+.warning-button {
+  min-height: 46px;
+  padding: 12px 16px;
+  border-color: var(--ink);
+  background: var(--accent);
+  color: var(--on-accent);
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.close-button {
+  text-decoration: none;
+}
+
+@media (max-width: 600px) {
+  .site-nav,
+  .map-controls,
+  .map-hint,
+  .slots-section,
+  .slot-info {
+    border-width: 2px;
+    box-shadow: 3px 3px 0 var(--ink);
+  }
+
+  .site-links a {
+    border-width: 1px;
+    box-shadow: 2px 2px 0 var(--ink);
   }
 }
