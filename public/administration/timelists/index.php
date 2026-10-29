@@ -43,12 +43,13 @@
                             <th scope="col">Data</th>
                             <th scope="col">Justificativa</th>
                             <th scope="col">Solicitado em</th>
+                            <th scope="col">Status</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php if ($reservations === []): ?>
                             <tr>
-                                <td colspan="8">Nenhuma reserva encontrada.</td>
+                                <td colspan="9">Nenhuma reserva encontrada.</td>
                             </tr>
                         <?php else: ?>
                             <?php foreach ($reservations as $reservation):
@@ -64,6 +65,7 @@
                                     <td><?= htmlspecialchars($reservation->getReservationDate(), ENT_QUOTES, 'UTF-8') ?></td>
                                     <td><?= htmlspecialchars($reservation->getReason() ?? '', ENT_QUOTES, 'UTF-8') ?></td>
                                     <td><?= htmlspecialchars($reservation->getReservedAt(), ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td><?= htmlspecialchars($reservation->getStatus(), ENT_QUOTES, 'UTF-8') ?></td>
                                 </tr>
                             <?php endforeach; ?>
                         <?php endif; ?>

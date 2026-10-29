@@ -12,34 +12,22 @@ class ReservationDB
     }
 
     public function createReservation(
-        string $email,
+        int $userId,
         int $slotId,
         string $topic,
         string $startTime,
         string $endTime,
         string $reservationDate,
         ?string $reason
-    ): Reservation {
-        if ($slotId < 1 || trim($topic) == '') {
-            throw new InvalidArgumentException('A valid room and a non-empty topic are required.');
-        }
-
-        $userStmt = $this->pdo->prepare('SELECT user_id FROM `user` WHERE user_email = ?');
-        $userStmt->execute([$email]);
-        $userId = $userStmt->fetchColumn();
-
-        if ($userId == false) {
-            throw new InvalidArgumentException('The user email does not exist.');
-        }
-
-        $slotStmt = $this->pdo->prepare('SELECT slot_id FROM `slot` WHERE slot_id = ?');
-        $slotStmt->execute([$slotId]);
-        if ($slotStmt->fetchColumn() == false) {
-            throw new InvalidArgumentException('The selected room does not exist.');
+        ): Reservation 
+    //cria uma reserva
+    {
+        if ($userId < 1 || $slotId < 1 || trim($topic) === '') {
+            throw new InvalidArgumentException('A valid user, room, and non-empty topic are required');
         }
 
         $stmt = $this->pdo->prepare(
-            'INSERT INTO `reserved_slot` (
+            'INSERT INTO `reservation` (
                 reserved_slot_user_id,
                 reserved_slot_slot_id,
                 reserved_slot_topic,
@@ -58,7 +46,7 @@ class ReservationDB
              )'
         );
         $stmt->execute([
-            'user_id' => (int) $userId,
+            'user_id' => $userId,
             'slot_id' => $slotId,
             'topic' => trim($topic),
             'start_time' => $startTime,
@@ -68,39 +56,46 @@ class ReservationDB
         ]);
 
         $reservationId = (int) $this->pdo->lastInsertId();
-        $reservationStmt = $this->pdo->prepare(
-            'SELECT reserved_slot_at FROM `reserved_slot` WHERE reserved_slot_id = ?'
-        );
-        $reservationStmt->execute([$reservationId]);
-        $reservedAt = $reservationStmt->fetchColumn();
-
-        if ($reservedAt === false) {
-            throw new RuntimeException('The reservation was inserted but could not be loaded.');
-        }
 
         return new Reservation(
-            (int) $userId,
-            $email,
+            $reservationId,
+            $userId,
             $slotId,
             trim($topic),
             $startTime,
             $endTime,
             $reservationDate,
             $reason,
-            $reservedAt
+            date('Y-m-d H:i:s'),
+            'pending'
         );
     }
 
+    public function confirmReservation(int $id): bool
+    {
+        return $this->updatePendingReservationStatus($id, 'confirmed');
+    }
+
+    public function rejectReservation(int $id): bool
+    {
+        return $this->updatePendingReservationStatus($id, 'rejected');
+    }
+
+    public function cancelReservation(int $id): bool
+    {
+        return $this->updatePendingReservationStatus($id, 'cancelled');
+    }
+
     public function getReservationById(int $id): ?Reservation
+    //retorna a reserva por id
     {
         $stmt = $this->pdo->prepare(
-            'SELECT reserved_slot.reserved_slot_user_id, `user`.user_email,
+            'SELECT reserved_slot.reserved_slot_id, reserved_slot.reserved_slot_user_id,
                     reserved_slot.reserved_slot_slot_id, reserved_slot.reserved_slot_topic,
                     reserved_slot.reserved_slot_start_time, reserved_slot.reserved_slot_end_time,
                     reserved_slot.reserved_slot_date, reserved_slot.reserved_slot_reason,
-                    reserved_slot.reserved_slot_at
-             FROM `reserved_slot`
-             JOIN `user` ON `user`.user_id = reserved_slot.reserved_slot_user_id
+                    reserved_slot.reserved_slot_at, reserved_slot.reserved_slot_status
+             FROM `reservation` AS reserved_slot
              WHERE reserved_slot.reserved_slot_id = ?'
         );
         $stmt->execute([$id]);
@@ -111,46 +106,61 @@ class ReservationDB
         }
 
         return new Reservation(
+            (int) $row['reserved_slot_id'],
             (int) $row['reserved_slot_user_id'],
-            $row['user_email'],
             (int) $row['reserved_slot_slot_id'],
             $row['reserved_slot_topic'],
             $row['reserved_slot_start_time'],
             $row['reserved_slot_end_time'],
             $row['reserved_slot_date'],
             $row['reserved_slot_reason'],
-            $row['reserved_slot_at']
+            $row['reserved_slot_at'],
+            $row['reserved_slot_status']
         );
     }
 
     public function getAllReservation(): array
+    //cria uma array com varios objetos reservation
     {
         $stmt = $this->pdo->query(
-            'SELECT reserved_slot.reserved_slot_user_id, `user`.user_email,
+            'SELECT reserved_slot.reserved_slot_id, reserved_slot.reserved_slot_user_id,
                     reserved_slot.reserved_slot_slot_id, reserved_slot.reserved_slot_topic,
                     reserved_slot.reserved_slot_start_time, reserved_slot.reserved_slot_end_time,
                     reserved_slot.reserved_slot_date, reserved_slot.reserved_slot_reason,
-                    reserved_slot.reserved_slot_at
-             FROM `reserved_slot`
-             JOIN `user` ON `user`.user_id = reserved_slot.reserved_slot_user_id
+                    reserved_slot.reserved_slot_at, reserved_slot.reserved_slot_status
+             FROM `reservation` AS reserved_slot
              ORDER BY reserved_slot.reserved_slot_date, reserved_slot.reserved_slot_start_time'
         );
 
         $reservations = [];
         foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
             $reservations[] = new Reservation(
+                (int) $row['reserved_slot_id'],
                 (int) $row['reserved_slot_user_id'],
-                $row['user_email'],
                 (int) $row['reserved_slot_slot_id'],
                 $row['reserved_slot_topic'],
                 $row['reserved_slot_start_time'],
                 $row['reserved_slot_end_time'],
                 $row['reserved_slot_date'],
                 $row['reserved_slot_reason'],
-                $row['reserved_slot_at']
+                $row['reserved_slot_at'],
+                $row['reserved_slot_status']
             );
         }
 
         return $reservations;
+    }
+
+    private function updatePendingReservationStatus(int $id, string $status): bool
+    //retorna true ou false se der certo ou errado
+    {
+        $stmt = $this->pdo->prepare(
+            'UPDATE `reservation`
+             SET reserved_slot_status = ?
+             WHERE reserved_slot_id = ? AND reserved_slot_status = ?'
+        );
+        $stmt->execute([$status, $id, 'pending']);
+
+        return $stmt->rowCount() > 0;
     }
 }

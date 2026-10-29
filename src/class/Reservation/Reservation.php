@@ -3,26 +3,27 @@
 class Reservation
 {
     public function __construct(
+        private int $id,
         private int $userId,
-        private string $email,
         private int $slotId,
         private string $topic,
         private string $startTime,
         private string $endTime,
         private string $reservationDate,
         private ?string $reason,
-        private string $reservedAt
+        private string $reservedAt,
+        private string $status = 'pending'
     ) {
+    }
+
+    public function getId(): int
+    {
+        return $this->id;
     }
 
     public function getUserId(): int
     {
         return $this->userId;
-    }
-
-    public function getEmail(): string
-    {
-        return $this->email;
     }
 
     public function getSlot(): int
@@ -58,5 +59,10 @@ class Reservation
     public function getReservedAt(): string
     {
         return $this->reservedAt;
+    }
+
+    public function getStatus(): string
+    {
+        return $this->status;
     }
 }

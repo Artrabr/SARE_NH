@@ -128,7 +128,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content']) && is_stri
                       <div class="user-avatar">JS</div>
                       <div class="user-info">
                         <strong>João da Silva</strong>
-                        <span>joao@email.com</span>
                       </div>
                     </td>
                     <td>14:00</td>
@@ -151,7 +150,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content']) && is_stri
               </div>
               <form method="POST" action="pcs_SlotReservation.php" class="reservation-form">
                 <input type="hidden" name="slot_id" value="<?= htmlspecialchars((string) $selectedSlot->getId(), ENT_QUOTES, 'UTF-8') ?>">
-                <input type="hidden" name="user_email" value="<?= htmlspecialchars($_SESSION['obj_user']->getEmail(), ENT_QUOTES, 'UTF-8') ?>">
                 <div class="form-group">
                   <label for="topic">TÓPICO</label>
                   <input type="text" id="topic" name="topic" value="<?= htmlspecialchars($defaultTopic, ENT_QUOTES, 'UTF-8') ?>" required>

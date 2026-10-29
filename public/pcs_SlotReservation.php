@@ -29,9 +29,14 @@ function connect(){
 //         CÓDIGO
 //-------------------------
 
-$requiredFields = ['slot_id','user_email','topic','start_time','end_time','reservation_date','reason'];
+if (!isset($_SESSION['obj_user']) || !method_exists($_SESSION['obj_user'], 'getId')) {
+    header('Location: ' . PUBLIC_URL . '/login/login.php');
+    exit();
+}
 
-if(!checkData($_POST, $requiredFields)){
+$requiredFields = ['slot_id', 'topic', 'start_time', 'end_time', 'reservation_date', 'reason'];
+
+if (!checkData($_POST, $requiredFields)) {
     header('Location: ' . PUBLIC_URL . '/index.php?faltadecampos=true');
     exit();
 }
@@ -40,7 +45,7 @@ $pdo = connect();
 
 $db = new ReservationDB($pdo);
 $reservation = $db->createReservation(
-    $_POST['user_email'],
+    (int) $_SESSION['obj_user']->getId(),
     (int) $_POST['slot_id'],
     $_POST['topic'],
     $_POST['start_time'],
