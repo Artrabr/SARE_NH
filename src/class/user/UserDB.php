@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . "/User.php";
+require_once __DIR__ . "/DuplicateEmail.php";
 
 class UserDB
 {
@@ -12,16 +13,25 @@ class UserDB
         $this->pdo = $pdo;
     }
 
+    public function setAdmin(string $input): bool
+    {
+        $input = strtolower($input);
+        return $input === 'coordenador' || $input === 'diretor';
+    }
+
     public function getUserByID(int $id): ?User
     {
         $stmt = $this->pdo->prepare("SELECT user_id, user_name, user_email, user_category FROM `user` WHERE user_id = ?");
         $stmt->execute([$id]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($row) {
-            return new User((int) $row['user_id'], $row['user_name'], $row['user_email'], $row['user_category']);
+        if (!$row) {
+            return null;
         }
-        return null;
+
+        $admin = $this->setAdmin($row['user_category']);
+
+        return new User((int) $row['user_id'], $row['user_name'], $row['user_email'], $row['user_category'], $admin);
     }
     /* @return User[] */
     public function getAllUsers(): array
@@ -34,11 +44,13 @@ class UserDB
 
         $users = [];
         foreach ($stmt->fetchAll() as $row) {
+            $admin = $this->setAdmin($row['user_category']);
             $users[] = new User(
                 (int) $row['user_id'],
                 $row['user_name'],
                 $row['user_email'],
-                $row['user_category']
+                $row['user_category'],
+                $admin
             );
         }
 
@@ -46,15 +58,19 @@ class UserDB
     }
 
     public function getUserByEmail(string $email): ?User
+    //retorna ou user ou null
     {
         $stmt = $this->pdo->prepare("SELECT user_id, user_name, user_email, user_category FROM `user` WHERE user_email = ?");
         $stmt->execute([$email]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($row) {
-            return new User((int) $row['user_id'], $row['user_name'], $row['user_email'], $row['user_category']);
+        if (!$row) {
+            return null;
         }
-        return null;
+
+        $admin = $this->setAdmin($row['user_category']);
+
+        return new User((int) $row['user_id'], $row['user_name'], $row['user_email'], $row['user_category'],$admin);
     }
 
     public function checkIfPasswordMatch(string $email, string $password): bool
@@ -78,8 +94,9 @@ class UserDB
                 'category' => $category,
             ]);
             $id = (int) $this->pdo->lastInsertId();
+            $admin = $this->setAdmin($category);
 
-            return new User($id, $name, $email, $category);
+            return new User($id, $name, $email, $category, $admin);
         } catch (PDOException $e) {
             //error for when the email already exists
             if ($e->getCode() == '23000' && ($e->errorInfo[1] ?? null) === 1062) {

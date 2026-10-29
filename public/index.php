@@ -1,25 +1,34 @@
 <?php
+//-------------requires----------------------------//
 require_once __DIR__ . '/../bootstrap.php';
 require_once CLASS_PATH . 'User/User.php';
 require_once CLASS_PATH . 'Teacher/Teacher.php';
 require_once CLASS_PATH . 'Slot/SlotDB.php';
 require_once DATA_PATH . 'Connection.php';
+//================================================//
+
+//----------------Declaracao de topo-----------------//
 $isUserLoggedIn = isset($_SESSION['obj_user']);
 $slotDb = new SlotDB(Connection::Connect());
 $slots = $slotDb->getAllSlots();
 $slotId = filter_input(INPUT_GET, 'slot_id', FILTER_VALIDATE_INT);
 $selectedSlot = null;
+$admin = 'coordenador';
+//---------------------------------------------------//
 
-if ($slotId !== false && $slotId !== null && $slotId > 0) {
+if ($slotId !== false && $slotId !== null && $slotId > 0) { //verifica se nao tem jeito nem um de estar null, mas de jeito nem um mesmo, impressionante
   $selectedSlot = $slotDb->getSlotByID($slotId);
 }
 
-$defaultTopic = '';
+//------------------------------definir o topico padrao da aula-------------------------------//
+$defaultTopic = ''; 
+//seguranca, caso nao seja carregado na classe user --> nao sei se nao da pra remover, mas fica pra dps
 if ($isUserLoggedIn && method_exists($_SESSION['obj_user'], 'getDefaultReservationTopic')) {
-  $defaultTopic = $_SESSION['obj_user']->getDefaultReservationTopic();
+  $defaultTopic = $_SESSION['obj_user']->getDefaultReservationTopic(); //define o topico baseado na classe
 }
+//============================================================================================//
 
-//----------------Manipulação-do-dado-em-php----------------->
+//----------------Manipulação-do-dado-em-php-do-svg-----------------//
 $selecionado = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content']) && is_string($_POST['content'])) {
@@ -28,6 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content']) && is_stri
     $selectedSlot = $slotDb->getSlotByInstitutionalName($selecionado);
   }
 }
+//===================================================================//
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -37,37 +47,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content']) && is_stri
     <link rel="icon" type="image/x-icon" href=""><!--LOGO DO SITE-->
     <title>SARENH</title>
     <link href="public_css/index_style.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
   </head>
-  <body class="scroll">
-  
-    <a href="login/login.php">login</a><br>
-    <a href="register/index.php">Register</a>
-    <a href="pcs_EndSession.php">logout</a>
-    
-    <?php if ($isUserLoggedIn && $_SESSION['obj_user']->getCategory() === "coordenador"): ?>
-      <a href="administration/index.php">administrar</a>
-    <?php endif; ?> 
-    
-<?php /*TESTE DE LOGIN
-  if(isset($_SESSION['obj_user'])):
-      $userName = $_SESSION['obj_user']->getName();
-      $email = $_SESSION['obj_user']->getEmail();
-      $category = $_SESSION['obj_user']->getCategory();
-    if ($isUserLoggedIn): ?>
-      <img src="img/logado.png" alt="logado">
-      <p><?=$userName?></p>
-      <p><?=$email?></p>
-      <?php if($category):?> <p><?=$category?></p> <?php endif?>
-    <?php else: ?>
-      <img src="img/nologado.png" alt="não logado">
-    <?php endif; endif;
-*/?>
+
+
+
+<body class="map-page">
+
+    <nav class="site-nav" aria-label="Navegação principal">
+      <a class="site-brand" href="index.php">SARENH</a>
+
+      <div class="site-links">
+        <?php
+        if(!$isUserLoggedIn):
+        ?>
+          <a href="login/login.php">Login</a>
+          <a href="register/index.php">Cadastro</a>
+        <?php
+        elseif($isUserLoggedIn && $_SESSION['obj_user']->isAdmin()):
+        ?>
+          <a href="administration/index.php">Administrar</a>
+        <?php
+        else:
+        ?>
+          <a href="#"></a> <!--ir para a pagina do usuario-->
+        <?php
+        endif;
+        ?>
+      </div>
+    </nav>
     
     <main class="main-container<?= $selectedSlot !== null ? ' has-selection' : '' ?>">
       <section class="slots-section">
         <div class="section-heading">
           <div>
             <h2>ESPAÇOS DISPONÍVEIS</h2>
+            <p>Clique em uma sala da planta para consultar os detalhes e solicitar uma reserva.</p>
           </div>
           <span class="section-label">SELECIONE UMA SALA</span>
         </div>
@@ -81,6 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content']) && is_stri
               <h2><?= htmlspecialchars($selectedSlot->getInstitutionalName(), ENT_QUOTES, 'UTF-8') ?></h2>
               <p class="slot-name"><?= htmlspecialchars($selectedSlot->getName(), ENT_QUOTES, 'UTF-8') ?></p>
             </div>
+            <a class="close-button" href="index.php" aria-label="Voltar ao mapa">×</a>
           </div>
 
           <div class="description-card">
@@ -177,11 +193,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content']) && is_stri
     </main>
     
 <svg
-   width="210mm"
-   height="297mm"
+   width="100%"
+   height="100%"
    viewBox="0 0 210 297"
    version="1.1"
-   id="svg1"
+   preserveAspectRatio="xMidYMid meet"
+   id="campus-map"
+   data-selected-slot="<?= $selectedSlot !== null ? htmlspecialchars($selectedSlot->getInstitutionalName(), ENT_QUOTES, 'UTF-8') : '' ?>"
    inkscape:export-filename="mapacampus.svg"
    inkscape:export-xdpi="96"
    inkscape:export-ydpi="96"
@@ -420,59 +438,85 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content']) && is_stri
          y="174.35834">b2-01</tspan></text>
   </g>
 </svg>
+    <nav class="map-controls" aria-label="Controles da planta">
+      <button type="button" id="zoom-in" aria-label="Aumentar zoom">+</button>
+      <button type="button" id="zoom-out" aria-label="Diminuir zoom">−</button>
+      <button type="button" id="reset-map" aria-label="Centralizar planta">⌖</button>
+    </nav>
+    <div class="map-hint">
+      <strong>Navegação</strong><br>
+      Scroll: zoom · Arraste: movimentar<br>
+      Clique em uma sala para selecioná-la
+    </div>
 <!--regiao-- MANIPULAÇÃO DO SVG -->
   <!------------Recebimento de dados do js > php--------------->
-    <form id="formSelection" action="index.php" method="post"> 
-        <!--form q envia os dados em POST com id formSelecao-->
-
-        <input type="hidden" name="content" id="Selected"></input> 
-        <!--input invisivel-->
+    <form id="formSelection" action="index.php" method="post">
+        <input type="hidden" name="content" id="Selected">
     </form>
 
     <script>
-  //------------------Tomada-de-dados-do-DOM------------------->
+      document.addEventListener("DOMContentLoaded", () => {
+        const map = document.getElementById("campus-map");
+        const selectionInput = document.getElementById("Selected");
+        const selectionForm = document.getElementById("formSelection");
+        const rooms = Array.from(map.querySelectorAll("rect"))
+          .filter((room) => room.hasAttribute("inkscape:label"));
+        const selectedSlot = map.dataset.selectedSlot.toLowerCase();
 
-      //---------------variaveis------------------/>
-      const r5 =  document.getElementById("rect5");
-      const r6 =  document.getElementById("rect6");
-      const r7 =  document.getElementById("rect7");
-      const r8 =  document.getElementById("rect8");
-      const r9 =  document.getElementById("rect9");
-      const r10= document.getElementById("rect10");
-      const r11= document.getElementById("rect11");
-      const r12= document.getElementById("rect12");
-      const r13= document.getElementById("rect13");
-      const r14= document.getElementById("rect14");
-      //------------------------------------------
-  
-          let v = [r5,r6,r7,r8,r9,r10,r11,r12,r13,r14]; //vetor com todos o objetos
+        rooms.forEach((room) => {
+          room.classList.add("room");
+          room.setAttribute("tabindex", "0");
+          room.setAttribute("role", "button");
 
-          v.forEach((element) => {
-              element.addEventListener("click", EXPORT_TO_PHP);
-          }); //faz um forEach e adiciona o EXPORT_TO_PHP em todos os objetos
-
-          function EXPORT_TO_PHP(event/*parâmetro que recebe informações sobre o clique*/){ 
-
-              //declarar os objetos em constantes:
-              const target = document.getElementById("Selected");
-              const submitForm = document.getElementById("formSelection");
-
-              console.log(target);
-              console.log(submitForm);
-              
-
-              // basedo no id do <rect>  do  sgv  pegamos o
-              // atributo (getAttribute) inkscape:label que
-              // por  padrão  tem os valores do tipo string
-              // e envia os dados  igual  ao  innerHTML mas
-              // alterando       apenas       o       value
-
-              target.value = event.currentTarget.getAttribute("inkscape:label");
-              
-              //recarega a pagina
-              submitForm.requestSubmit();
+          const label = room.getAttribute("inkscape:label");
+          room.setAttribute("aria-label", `Selecionar ${label}`);
+          if (label.toLowerCase() === selectedSlot) {
+            room.classList.add("selected");
           }
-  </script>
+
+          const selectRoom = () => {
+            selectionInput.value = label;
+            selectionForm.requestSubmit();
+          };
+
+          room.addEventListener("click", selectRoom);
+          room.addEventListener("keydown", (event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              selectRoom();
+            }
+          });
+        });
+
+        if (typeof svgPanZoom !== "function") {
+          console.error("A biblioteca de navegação da planta não foi carregada.");
+          return;
+        }
+
+        const navigation = svgPanZoom(map, {
+          zoomEnabled: true,
+          panEnabled: true,
+          controlIconsEnabled: false,
+          mouseWheelZoomEnabled: true,
+          preventMouseEventsDefault: true,
+          dblClickZoomEnabled: true,
+          pinchZoomEnabled: true,
+          minZoom: 0.5,
+          maxZoom: 12,
+          zoomScaleSensitivity: 0.3,
+          fit: true,
+          center: true
+        });
+
+        document.getElementById("zoom-in").addEventListener("click", () => navigation.zoomIn());
+        document.getElementById("zoom-out").addEventListener("click", () => navigation.zoomOut());
+        document.getElementById("reset-map").addEventListener("click", () => {
+          navigation.resetZoom();
+          navigation.fit();
+          navigation.center();
+        });
+      });
+    </script>
 <!--endregiao-->
   </body>
 </html>

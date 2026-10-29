@@ -5,13 +5,15 @@ class User{
     protected string $name;
     protected string $email;
     protected string $category;
+    protected bool $admin;
 
-    public function __construct(int $id, string $name, string $email, string $category)
+    public function __construct(int $id, string $name, string $email, string $category, bool $admin = false)
     {
         $this->id = $id;
         $this->name = $name;
         $this->email = $email;
         $this->category = $category;
+        $this->admin = $admin;
     }
     
     public function getId(): int{
@@ -28,5 +30,9 @@ class User{
 
     public function getCategory(): string{
         return $this->category;
+    }
+
+    public function isAdmin(): bool{
+        return $this->admin;
     }
 }
