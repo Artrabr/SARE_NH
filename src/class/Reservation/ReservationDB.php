@@ -152,6 +152,7 @@ class ReservationDB
     }
 
     private function updatePendingReservationStatus(int $id, string $status): bool
+    //atualiza para padding o pedido de reserva ou oq tu por no status
     //retorna true ou false se der certo ou errado
     {
         $stmt = $this->pdo->prepare(

@@ -61,8 +61,8 @@ class SlotDB
             $slots[] = new Slot(
                 (int) $row['slot_id'],
                 $row['slot_name'],
-                $row['slot_institutional_name'],
-                $row['slot_description']
+                $row['slot_institutional_name'] ?? '',
+                $row['slot_description'] ?? ''
             );
         }
 

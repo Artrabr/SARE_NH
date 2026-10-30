@@ -1,3 +1,13 @@
+<?php
+require_once __DIR__ . '/../../../bootstrap.php';
+require_once CLASS_PATH . 'Auth/Auth.php';
+require_once DATA_PATH . 'Connection.php';
+require_once CLASS_PATH . 'Slot/SlotDB.php';
+
+Auth::requireCategory('coordenador');
+
+$slots = (new SlotDB(Connection::Connect()))->getAllSlots();
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -33,11 +43,36 @@
         </aside>
 
         <main class="content">
-            <section class="panel">
-                <h1>Registro de salas</h1>
-                <p>Visualize e acompanhe os relatórios da estrutura de salas do campus.</p>
-                <div class="report-image-wrap">
-                    <img src="relatorio.png" alt="Relatório de salas" class="report-image">
+            <section class="panel table-panel">
+                <h1>Salas cadastradas</h1>
+                <h2 style="color: red;">arrumar essa pagina. os campos tem q ser alteraveis pelo formulario e adicionar campo de interditado</h2>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>Identificação institucional</th>
+                                <th>Descrição</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if ($slots === []): ?>
+                                <tr>
+                                    <td colspan="4">Nenhuma sala cadastrada.</td>
+                                </tr>
+                            <?php else: ?>
+                                <?php foreach ($slots as $slot): ?>
+                                    <tr>
+                                        <td><?= htmlspecialchars((string) $slot->getId(), ENT_QUOTES, 'UTF-8') ?></td>
+                                        <td><?= htmlspecialchars($slot->getName(), ENT_QUOTES, 'UTF-8') ?></td>
+                                        <td><?= htmlspecialchars($slot->getInstitutionalName(), ENT_QUOTES, 'UTF-8') ?></td>
+                                        <td><?= htmlspecialchars($slot->getDescription(), ENT_QUOTES, 'UTF-8') ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
                 </div>
                 <a class="back-link" href="../index.php">Voltar para o painel administrativo</a>
             </section>
