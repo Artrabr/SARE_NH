@@ -50,13 +50,14 @@ $pdo = connect();
 $userDB = new UserDB($pdo);
 
 try {
-    if($userDB->getUserByEmail($email)){
+    if ($userDB->getUserByEmail($email)) {
         disconnect($pdo);
         header('Location: ' . PUBLIC_URL . '/index.php?error=alreadyCreated');
         exit();
     }
-} catch (Exception $e){
+} catch (PDOException $e) {
     disconnect($pdo);
+    error_log('ERRO ao consultar usuário por e-mail: ' . $e->getMessage());
     header('Location: ' . PUBLIC_URL . '/index.php?error=5');
     exit();
 }

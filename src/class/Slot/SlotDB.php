@@ -1,7 +1,7 @@
 <?php
 
 require_once __DIR__ . "/Slot.php";
-require_once __DIR__ . "/../user/DuplicateEmail.php";
+require_once __DIR__ . "/../User/DuplicateEmail.php";
 
 class SlotDB
 {

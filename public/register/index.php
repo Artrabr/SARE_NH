@@ -4,12 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="register.css">
-    <link rel="stylesheet" href="../public_css/ifBrutal.css">
     <title>Página de Registro</title>
 </head>
 <body>
     <section class="login-container">
-        <img src="../midia/img/ifsullogo/ifsul-logo.png" alt="logo if">
+        <a href="../index.php"><img src="../midia/img/ifsullogo/ifsul-logo.png" alt="logo if"></a>
         <h1>Registro</h1>
         <form method="POST" action="pcs_Register.php">
             <label for="username" class="labels">Username:</label>
@@ -21,7 +20,8 @@
             <label for="password" class="labels">Senha:</label>
             <input id="password" type="password" name="password" placeholder="Crie sua senha" required>
 
-            <label for="category" class="labels">Categoria:</label>
+            <label for="category" class="labels">Categoria: (remover, campo para desenvolvedor)</label> 
+        <!--==================REMOVER PÓS PRODUÇÃO===================-->
             <select id="category" name="category" required>
                 <option value="">Selecione sua categoria</option>
                 <option value="professor">Professor</option>
@@ -29,6 +29,7 @@
                 <option value="servidor">Servidor</option>
                 <option value="diretor">Diretor</option>
             </select>
+        <!-------------------------------------------------------------->
 
             <div id="subject-field" hidden>
                 <label for="subject" class="labels">Matéria:</label>
@@ -49,7 +50,6 @@
             subject.disabled = !isTeacher;
             subject.required = isTeacher;
         }
-
         category.addEventListener('change', updateSubjectField);
         updateSubjectField();
     </script>

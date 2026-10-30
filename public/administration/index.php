@@ -3,36 +3,57 @@
     require_once CLASS_PATH . 'User/User.php';
     require_once CLASS_PATH . 'Teacher/Teacher.php';
     require_once CLASS_PATH . 'Auth/Auth.php';
-    
+
     Auth::requireCategory('coordenador');
 
     $name = $_SESSION['obj_user']->getName();
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administration</title>
+    <title>Administração</title>
+    <link rel="stylesheet" href="index.css">
 </head>
 <body>
-    <h1>Bem vindo <?=htmlspecialchars($name)?>!</h1>
-    <p>Esta é a página de administração</p>
+    <header class="topbar">
+        <div class="brand">SARENH</div>
+        <div class="topbar-user">
+            <span>Bem-vindo, <?= htmlspecialchars($name) ?>!</span>
+        </div>
+    </header>
 
-    <div> <!--atalhos iniciais-->
-        <ul>
-            <li><a href="timelists/index.php">Gerenciar horários</a></li>
-            <li><a href="classroomTimeList/classroomTimeList.php">Gerenciar registros de salas</a></li>
-            <li><a href="clientList/clientList.php">Gerenciar usuários e professores</a></li>
-        </ul>
+    <div class="admin-shell">
+        <aside class="sidebar" aria-label="Sidebar de navegação">
+            <div class="sidebar-title">Menu</div>
+            <nav>
+                <ul class="sidebar-nav">
+                    <li><a href="index.php" class="active">Painel</a></li>
+                    <li><a href="timelists/index.php">Reservas</a></li>
+                    <li><a href="classroomTimeList/classroomTimeList.php">Salas</a></li>
+                    <li><a href="clientList/clientList.php">Usuários</a></li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a class="sidebar-logout-link" href="../pcs_EndSession.php">Deslogar</a>
+                <a class="sidebar-back-link" href="../index.php">Voltar ao mapa</a>
+            </div>
+        </aside>
+
+        <main class="content">
+            <section class="panel">
+                <h1>Painel administrativo</h1>
+                <p>Gerencie reservas, usuários e salas do sistema.</p>
+            </section>
+
+            <section class="quick-actions">
+                <a href="timelists/index.php">Gerenciar horários</a>
+                <a href="classroomTimeList/classroomTimeList.php">Gerenciar registros de salas</a>
+                <a href="clientList/clientList.php">Gerenciar usuários e professores</a>
+            </section>
+        </main>
     </div>
-
-    <nav> <!--icones-->
-        <ul>
-            <li><a href="clientList/clientList.php">Gerenciar usuários e professores</a></li>
-            <li><a href="classroomTimeList/classroomTimeList.php">Gerenciar registros de salas</a></li>
-            <li><a href="timelists/index.php">Gerenciar horários</a></li>
-        </ul>
-    </nav>
 </body>
 </html>

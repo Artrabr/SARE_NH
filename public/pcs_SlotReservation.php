@@ -41,6 +41,23 @@ if (!checkData($_POST, $requiredFields)) {
     exit();
 }
 
+$startTime = $_POST['start_time'];
+$endTime = $_POST['end_time'];
+$validTimeFormat = is_string($startTime)
+    && is_string($endTime)
+    && preg_match('/^(?:[01]\d|2[0-3]):[0-5]\d$/', $startTime)
+    && preg_match('/^(?:[01]\d|2[0-3]):[0-5]\d$/', $endTime);
+
+if (!$validTimeFormat || $endTime <= $startTime) {
+    $slotId = filter_var($_POST['slot_id'], FILTER_VALIDATE_INT);
+    $redirect = PUBLIC_URL . '/index.php?horario_invalido=true';
+    if ($slotId !== false && $slotId > 0) {
+        $redirect .= '&slot_id=' . $slotId;
+    }
+    header('Location: ' . $redirect);
+    exit();
+}
+
 $pdo = connect();
 
 $db = new ReservationDB($pdo);

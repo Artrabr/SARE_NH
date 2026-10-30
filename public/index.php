@@ -150,6 +150,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content']) && is_stri
               </div>
               <form method="POST" action="pcs_SlotReservation.php" class="reservation-form">
                 <input type="hidden" name="slot_id" value="<?= htmlspecialchars((string) $selectedSlot->getId(), ENT_QUOTES, 'UTF-8') ?>">
+                <?php if (isset($_GET['horario_invalido'])): ?>
+                  <p class="reservation-error" role="alert">O horário de término deve ser posterior ao horário de início.</p>
+                <?php endif; ?>
                 <div class="form-group">
                   <label for="topic">TÓPICO</label>
                   <input type="text" id="topic" name="topic" value="<?= htmlspecialchars($defaultTopic, ENT_QUOTES, 'UTF-8') ?>" required>
@@ -237,7 +240,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content']) && is_stri
        height="28.798326"
        x="16.377323"
        y="45.819702"
-       inkscape:label="convivnecia" />
+       inkscape:label="convivencia" />
     <rect
        style="fill:#dadada;fill-opacity:1;stroke:#000000;stroke-width:0.964999;stroke-dasharray:none;stroke-opacity:1"
        id="rect6"
@@ -436,6 +439,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content']) && is_stri
          y="174.35834">b2-01</tspan></text>
   </g>
 </svg>
+
     <nav class="map-controls" aria-label="Controles da planta">
       <button type="button" id="zoom-in" aria-label="Aumentar zoom">+</button>
       <button type="button" id="zoom-out" aria-label="Diminuir zoom">−</button>
@@ -453,13 +457,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content']) && is_stri
     </form>
 
     <script>
+      //-------------------------seleção de variaveis e adicao da funao room pra cada um
       document.addEventListener("DOMContentLoaded", () => {
         const map = document.getElementById("campus-map");
         const selectionInput = document.getElementById("Selected");
         const selectionForm = document.getElementById("formSelection");
         const rooms = Array.from(map.querySelectorAll("rect"))
-          .filter((room) => room.hasAttribute("inkscape:label"));
+
+        .filter((room) => room.hasAttribute("inkscape:label"));
+
         const selectedSlot = map.dataset.selectedSlot.toLowerCase();
+        
 
         rooms.forEach((room) => {
           room.classList.add("room");
@@ -514,6 +522,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content']) && is_stri
           navigation.center();
         });
       });
+        
+
     </script>
 <!--endregiao-->
   </body>

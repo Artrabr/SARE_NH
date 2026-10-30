@@ -26,55 +26,81 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pedidos de reserva</title>
+    <link rel="stylesheet" href="../index.css">
 </head>
 <body>
-    <main>
-        <section>
-            <div>
-                <table>
-                    <caption>Reservas de salas</caption>
-                    <thead>
-                        <tr>
-                            <th scope="col">Usuário</th>
-                            <th scope="col">Sala</th>
-                            <th scope="col">Tópico</th>
-                            <th scope="col">Início</th>
-                            <th scope="col">Fim</th>
-                            <th scope="col">Data</th>
-                            <th scope="col">Justificativa</th>
-                            <th scope="col">Solicitado em</th>
-                            <th scope="col">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php if ($reservations === []): ?>
-                            <tr>
-                                <td colspan="9">Nenhuma reserva encontrada.</td>
-                            </tr>
-                        <?php else: ?>
-                            <?php foreach ($reservations as $reservation):
-                                $userID = $reservation->getUserId();
-                                $user = $userDB->getUserByID($userID);
-                            ?>
-                                <tr>
-                                    <td><?= htmlspecialchars($user ? $user->getName() : 'Usuário não encontrado', ENT_QUOTES, 'UTF-8') ?></td>
-                                    <td><?= htmlspecialchars($slotsById[$reservation->getSlot()] ?? 'Sala não encontrada', ENT_QUOTES, 'UTF-8') ?></td>
-                                    <td><?= htmlspecialchars($reservation->getTopic(), ENT_QUOTES, 'UTF-8') ?></td>
-                                    <td><?= htmlspecialchars(substr($reservation->getStartTime(), 0, 5), ENT_QUOTES, 'UTF-8') ?></td>
-                                    <td><?= htmlspecialchars(substr($reservation->getEndTime(), 0, 5), ENT_QUOTES, 'UTF-8') ?></td>
-                                    <td><?= htmlspecialchars($reservation->getReservationDate(), ENT_QUOTES, 'UTF-8') ?></td>
-                                    <td><?= htmlspecialchars($reservation->getReason() ?? '', ENT_QUOTES, 'UTF-8') ?></td>
-                                    <td><?= htmlspecialchars($reservation->getReservedAt(), ENT_QUOTES, 'UTF-8') ?></td>
-                                    <td><?= htmlspecialchars($reservation->getStatus(), ENT_QUOTES, 'UTF-8') ?></td>
-                                </tr>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
-            </div>
-        </section>
+    <header class="topbar">
+        <div class="brand">SARENH</div>
+        <div class="topbar-user">
+            <span>Administração</span>
+        </div>
+    </header>
 
-        <a href="../index.php">Voltar para o painel administrativo</a>
-    </main>
+    <div class="admin-shell">
+        <aside class="sidebar" aria-label="Sidebar de navegação">
+            <div class="sidebar-title">Menu</div>
+            <nav>
+                <ul class="sidebar-nav">
+                    <li><a href="../index.php">Painel</a></li>
+                    <li><a href="index.php" class="active">Reservas</a></li>
+                    <li><a href="../classroomTimeList/classroomTimeList.php">Salas</a></li>
+                    <li><a href="../clientList/clientList.php">Usuários</a></li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a class="sidebar-logout-link" href="../../pcs_EndSession.php">Deslogar</a>
+                <a class="sidebar-back-link" href="../../index.php">Voltar ao mapa</a>
+            </div>
+        </aside>
+
+        <main class="content">
+            <section class="panel table-panel">
+                <h1>Reservas de salas</h1>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th scope="col">Usuário</th>
+                                <th scope="col">Sala</th>
+                                <th scope="col">Tópico</th>
+                                <th scope="col">Início</th>
+                                <th scope="col">Fim</th>
+                                <th scope="col">Data</th>
+                                <th scope="col">Justificativa</th>
+                                <th scope="col">Solicitado em</th>
+                                <th scope="col">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if ($reservations === []): ?>
+                                <tr>
+                                    <td colspan="9">Nenhuma reserva encontrada.</td>
+                                </tr>
+                            <?php else: ?>
+                                <?php foreach ($reservations as $reservation):
+                                    $userID = $reservation->getUserId();
+                                    $user = $userDB->getUserByID($userID);
+                                ?>
+                                    <tr>
+                                        <td><?= htmlspecialchars($user ? $user->getName() : 'Usuário não encontrado', ENT_QUOTES, 'UTF-8') ?></td>
+                                        <td><?= htmlspecialchars($slotsById[$reservation->getSlot()] ?? 'Sala não encontrada', ENT_QUOTES, 'UTF-8') ?></td>
+                                        <td><?= htmlspecialchars($reservation->getTopic(), ENT_QUOTES, 'UTF-8') ?></td>
+                                        <td><?= htmlspecialchars(substr($reservation->getStartTime(), 0, 5), ENT_QUOTES, 'UTF-8') ?></td>
+                                        <td><?= htmlspecialchars(substr($reservation->getEndTime(), 0, 5), ENT_QUOTES, 'UTF-8') ?></td>
+                                        <td><?= htmlspecialchars($reservation->getReservationDate(), ENT_QUOTES, 'UTF-8') ?></td>
+                                        <td><?= htmlspecialchars($reservation->getReason() ?? '', ENT_QUOTES, 'UTF-8') ?></td>
+                                        <td><?= htmlspecialchars($reservation->getReservedAt(), ENT_QUOTES, 'UTF-8') ?></td>
+                                        <td><?= htmlspecialchars($reservation->getStatus(), ENT_QUOTES, 'UTF-8') ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+                <a class="back-link" href="../index.php">Voltar para o painel administrativo</a>
+            </section>
+        </main>
+    </div>
 </body>
 </html>
