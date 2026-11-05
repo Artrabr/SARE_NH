@@ -31,8 +31,8 @@
                 <ul class="sidebar-nav">
                     <li><a href="index.php" class="active">Painel</a></li>
                     <li><a href="timelists/index.php">Reservas</a></li>
-                    <li><a href="classroomTimeList/classroomTimeList.php">Salas</a></li>
-                    <li><a href="clientList/clientList.php">Usuários</a></li>
+                    <li><a href="classroomTimeList/index.php">Salas</a></li>
+                    <li><a href="clientList/index.php">Usuários</a></li>
                 </ul>
             </nav>
 
@@ -50,8 +50,8 @@
 
             <section class="quick-actions">
                 <a href="timelists/index.php">Gerenciar horários</a>
-                <a href="classroomTimeList/classroomTimeList.php">Gerenciar registros de salas</a>
-                <a href="clientList/clientList.php">Gerenciar usuários e professores</a>
+                <a href="classroomTimeList/index.php">Gerenciar registros de salas</a>
+                <a href="clientList/index.php">Gerenciar usuários e professores</a>
             </section>
         </main>
     </div>

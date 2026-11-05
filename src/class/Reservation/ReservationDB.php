@@ -71,19 +71,21 @@ class ReservationDB
         );
     }
 
-    public function confirmReservation(int $id): bool
+    public function updateReservationStatus(int $id, string $status): bool
     {
-        return $this->updatePendingReservationStatus($id, 'confirmed');
-    }
+        $allowedStatuses = ['pending', 'confirmed', 'rejected', 'cancelled'];
+        if ($id < 1 || !in_array($status, $allowedStatuses, true)) {
+            throw new InvalidArgumentException('Invalid reservation ID or status');
+        }
 
-    public function rejectReservation(int $id): bool
-    {
-        return $this->updatePendingReservationStatus($id, 'rejected');
-    }
+        $stmt = $this->pdo->prepare(
+            'UPDATE `reservation`
+             SET reserved_slot_status = ?
+             WHERE reserved_slot_id = ?'
+        );
+        $stmt->execute([$status, $id]);
 
-    public function cancelReservation(int $id): bool
-    {
-        return $this->updatePendingReservationStatus($id, 'cancelled');
+        return $stmt->rowCount() > 0;
     }
 
     public function getReservationById(int $id): ?Reservation
@@ -149,19 +151,5 @@ class ReservationDB
         }
 
         return $reservations;
-    }
-
-    private function updatePendingReservationStatus(int $id, string $status): bool
-    //atualiza para padding o pedido de reserva ou oq tu por no status
-    //retorna true ou false se der certo ou errado
-    {
-        $stmt = $this->pdo->prepare(
-            'UPDATE `reservation`
-             SET reserved_slot_status = ?
-             WHERE reserved_slot_id = ? AND reserved_slot_status = ?'
-        );
-        $stmt->execute([$status, $id, 'pending']);
-
-        return $stmt->rowCount() > 0;
     }
 }

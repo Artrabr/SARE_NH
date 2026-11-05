@@ -31,8 +31,8 @@ $users = (new UserDB(Connection::Connect()))->getAllUsers();
                 <ul class="sidebar-nav">
                     <li><a href="../index.php">Painel</a></li>
                     <li><a href="../timelists/index.php">Reservas</a></li>
-                    <li><a href="../classroomTimeList/classroomTimeList.php">Salas</a></li>
-                    <li><a href="clientList.php" class="active">Usuários</a></li>
+                    <li><a href="../classroomTimeList/index.php">Salas</a></li>
+                    <li><a href="index.php" class="active">Usuários</a></li>
                 </ul>
             </nav>
 

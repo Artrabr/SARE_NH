@@ -31,8 +31,8 @@ $slots = (new SlotDB(Connection::Connect()))->getAllSlots();
                 <ul class="sidebar-nav">
                     <li><a href="../index.php">Painel</a></li>
                     <li><a href="../timelists/index.php">Reservas</a></li>
-                    <li><a href="classroomTimeList.php" class="active">Salas</a></li>
-                    <li><a href="../clientList/clientList.php">Usuários</a></li>
+                    <li><a href="index.php" class="active">Salas</a></li>
+                    <li><a href="../clientList/index.php">Usuários</a></li>
                 </ul>
             </nav>
 

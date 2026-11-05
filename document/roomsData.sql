@@ -9,4 +9,4 @@ INSERT INTO slot (slot_name, slot_institutional_name, slot_description) VALUES
 ('Sala B2-04', 'b2-04', 'Sala B2-04.'),
 ('Sala B2-03', 'b2-03', 'Sala B2-03.'),
 ('Sala B2-02', 'b2-02', 'Sala B2-02.'),
-('Sala B2-01', 'b2-01', 'Sala B2-01.');
+('Sala B2-01', 'b2-01',  'Sala B2-01.');

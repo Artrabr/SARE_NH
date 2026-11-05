@@ -9,6 +9,10 @@
     require_once CLASS_PATH . 'User/UserDB.php';
     require_once DATA_PATH . 'Connection.php';
 
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        require __DIR__ . '/pcs_UpdateReservationStatus.php';
+    }
+
     $pdo = Connection::Connect();
     $reservationDB = new ReservationDB($pdo);
     $reservations = $reservationDB->getAllReservation();
@@ -19,6 +23,7 @@
     foreach ($slotDB->getAllSlots() as $slot) {
         $slotsById[$slot->getId()] = $slot->getName();
     }
+
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -43,8 +48,8 @@
                 <ul class="sidebar-nav">
                     <li><a href="../index.php">Painel</a></li>
                     <li><a href="index.php" class="active">Reservas</a></li>
-                    <li><a href="../classroomTimeList/classroomTimeList.php">Salas</a></li>
-                    <li><a href="../clientList/clientList.php">Usuários</a></li>
+                    <li><a href="../classroomTimeList/index.php">Salas</a></li>
+                    <li><a href="../clientList/index.php">Usuários</a></li>
                 </ul>
             </nav>
 
@@ -57,6 +62,15 @@
         <main class="content">
             <section class="panel table-panel">
                 <h1>Reservas de salas</h1>
+                <div> <!-- ===========================Mensagens de status=========================== -->
+                <?php if (($_GET['status'] ?? '') === 'success'): ?>
+                    <p role="status">Status da reserva atualizado.</p>
+                <?php elseif (($_GET['status'] ?? '') === 'error'): ?>
+                    <p role="alert">Não foi possível atualizar o status da reserva.</p>
+                <?php elseif (($_GET['status'] ?? '') === 'noChange'): ?>
+                    <p role="status">O status selecionado já estava aplicado.</p>
+                <?php endif; ?>
+                </div>
                 <div class="table-wrap">
                     <table>
                         <thead>
@@ -79,8 +93,9 @@
                                 </tr>
                             <?php else: ?>
                                 <?php foreach ($reservations as $reservation):
-                                    $userID = $reservation->getUserId();
-                                    $user = $userDB->getUserByID($userID);
+                                    $user = $userDB->getUserByID($reservation->getUserId());
+                                    $status = $reservation->getStatus();
+                                    $reservationId = $reservation->getId();
                                 ?>
                                     <tr>
                                         <td><?= htmlspecialchars($user ? $user->getName() : 'Usuário não encontrado', ENT_QUOTES, 'UTF-8') ?></td>
@@ -91,7 +106,23 @@
                                         <td><?= htmlspecialchars($reservation->getReservationDate(), ENT_QUOTES, 'UTF-8') ?></td>
                                         <td><?= htmlspecialchars($reservation->getReason() ?? '', ENT_QUOTES, 'UTF-8') ?></td>
                                         <td><?= htmlspecialchars($reservation->getReservedAt(), ENT_QUOTES, 'UTF-8') ?></td>
-                                        <td><?= htmlspecialchars($reservation->getStatus(), ENT_QUOTES, 'UTF-8') ?></td>
+                                        <td>
+                                            <form action="index.php" method="POST">
+                                                <input type="hidden" name="reservation_id" value="<?= $reservationId ?>">
+                                                <select
+                                                    name="status"
+                                                    id="status-<?= $reservationId ?>"
+                                                    class="reservation-status"
+                                                    aria-label="Status da reserva #<?= $reservationId ?>"
+                                                >
+                                                    <option value="pending" <?= $status === 'pending' ? 'selected' : '' ?>>Pendente</option>
+                                                    <option value="confirmed" <?= $status === 'confirmed' ? 'selected' : '' ?>>Aprovada</option>
+                                                    <option value="rejected" <?= $status === 'rejected' ? 'selected' : '' ?>>Rejeitada</option>
+                                                    <option value="cancelled" <?= $status === 'cancelled' ? 'selected' : '' ?>>Cancelada</option>
+                                                </select>
+                                                <noscript><button type="submit">Atualizar</button></noscript>
+                                            </form>
+                                        </td>
                                     </tr>
                                 <?php endforeach; ?>
                             <?php endif; ?>
@@ -102,5 +133,10 @@
             </section>
         </main>
     </div>
+    <script>
+        document.querySelectorAll('.reservation-status').forEach((select) => {
+            select.addEventListener('change', () => select.form.requestSubmit());
+        });
+    </script>
 </body>
 </html>
