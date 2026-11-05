@@ -1,0 +1,35 @@
+-------------------------ideias de solução de bug-----------------------------
+
+    eu acho q da pra resolver o problema de dados pegos pelo front se eu salvar as salas na sessão.
+como o meu usuario sempre vai estar logado então não é um problem desde que eu nao use os objetos
+da sessao no index, oq eu acho q eu nao vou fazer.
+
+o padrao de dia é date('Y-m-d')
+
+//----------------------------------------------------------------------//
+ *  fazer horarios reservados e o ver disponibilidade / ver mais
+
+ *  corrigir o css
+
+ *  decidir se a pagina de ver disponibilidade / ver mais vai abrir uma
+    aba ao lado com todos os horarios ou se vai expandir a tabela.
+    pensei pra em celular eu colocar do lado e no pc colocar na tabela em si
+    da pra fazer isso usando js
+
+ideia de funcao
+                        --> function detectarDispositivo() {
+                        const ua = navigator.userAgent;
+
+                        if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(ua)) {
+                            return "Tablet";
+                        }
+                        if (/Mobile|iP(hone|od)|Android|BlackBerry|IEMobile|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/i.test(ua)) {
+                            return "Celular";
+                        }
+                        return "Computador/Desktop";
+                        }
+
+                        console.log(detectarDispositivo());
+
+
+/--------------------------------------------------------------------------/
