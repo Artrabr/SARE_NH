@@ -9,8 +9,6 @@ o padrao de dia é date('Y-m-d')
 //----------------------------------------------------------------------//
  *  fazer horarios reservados e o ver disponibilidade / ver mais
 
- *  corrigir o css
-
  *  decidir se a pagina de ver disponibilidade / ver mais vai abrir uma
     aba ao lado com todos os horarios ou se vai expandir a tabela.
     pensei pra em celular eu colocar do lado e no pc colocar na tabela em si
