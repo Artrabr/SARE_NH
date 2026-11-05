@@ -34,9 +34,21 @@ if (!isset($_SESSION['obj_user']) || !method_exists($_SESSION['obj_user'], 'getI
     exit();
 }
 
-$requiredFields = ['slot_id', 'topic', 'start_time', 'end_time', 'reservation_date', 'reason'];
+$requiredFields = ['slot_id', 'topic', 'start_time', 'end_time', 'reason'];
+$reservationDate = $_POST['reservation_date'] ?? date('Y-m-d');
 
-if (!checkData($_POST, $requiredFields)) {
+if (
+    !checkData($_POST, $requiredFields) ||
+    !is_string($reservationDate) ||
+    !preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $reservationDate, $dateParts) ||
+    !checkdate((int) $dateParts[2], (int) $dateParts[3], (int) $dateParts[1])
+) {
+    header('Location: ' . PUBLIC_URL . '/index.php?faltadecampos=true');
+    exit();
+}
+
+$slotId = filter_var($_POST['slot_id'], FILTER_VALIDATE_INT);
+if ($slotId === false || $slotId < 1) {
     header('Location: ' . PUBLIC_URL . '/index.php?faltadecampos=true');
     exit();
 }
@@ -49,11 +61,8 @@ $validTimeFormat = is_string($startTime)
     && preg_match('/^(?:[01]\d|2[0-3]):[0-5]\d$/', $endTime);
 
 if (!$validTimeFormat || $endTime <= $startTime) {
-    $slotId = filter_var($_POST['slot_id'], FILTER_VALIDATE_INT);
     $redirect = PUBLIC_URL . '/index.php?horario_invalido=true';
-    if ($slotId !== false && $slotId > 0) {
-        $redirect .= '&slot_id=' . $slotId;
-    }
+    $redirect .= '&slot_id=' . $slotId;
     header('Location: ' . $redirect);
     exit();
 }
@@ -61,15 +70,21 @@ if (!$validTimeFormat || $endTime <= $startTime) {
 $pdo = connect();
 
 $db = new ReservationDB($pdo);
-$reservation = $db->createReservation(
-    (int) $_SESSION['obj_user']->getId(),
-    (int) $_POST['slot_id'],
-    $_POST['topic'],
-    $_POST['start_time'],
-    $_POST['end_time'],
-    $_POST['reservation_date'],
-    $_POST['reason']
-);
+try {
+    $reservation = $db->createReservation(
+        (int) $_SESSION['obj_user']->getId(),
+        $slotId,
+        $_POST['topic'],
+        $startTime,
+        $endTime,
+        $reservationDate,
+        $_POST['reason']
+    );
+} catch (DomainException $e) {
+    disconnect($pdo);
+    header('Location: ' . PUBLIC_URL . '/index.php?horario_ocupado=true&slot_id=' . $slotId);
+    exit();
+}
 
 disconnect($pdo);
 header('Location: ' . PUBLIC_URL . '/index.php?sucesso=true');

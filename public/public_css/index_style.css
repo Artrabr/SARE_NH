@@ -5,6 +5,7 @@
   --color-sage: #88A06D;
   --color-sand: #CBB98A;
   --color-cream: #F4F0E2;
+  --color-error: #8f2929;
 
   --bg: var(--color-cream);
   --panel: var(--color-cream);
@@ -746,6 +747,35 @@ body {
   text-decoration: none;
 }
 
+.reservation-notification {
+  position: fixed;
+  z-index: 100;
+  top: 20px;
+  left: 50%;
+  width: min(520px, calc(100vw - 32px));
+  padding: 12px 16px;
+  transform: translateX(-50%);
+  border: 3px solid var(--ink);
+  background: var(--surface);
+  box-shadow: 4px 4px 0 var(--ink);
+  color: var(--color-error);
+  font-weight: 800;
+  text-align: center;
+  animation: reservation-notification-out 5s ease forwards;
+}
+
+@keyframes reservation-notification-out {
+  0%, 75% {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
 @media (max-width: 600px) {
   .site-nav,
   .map-controls,
@@ -754,6 +784,12 @@ body {
   .slot-info {
     border-width: 2px;
     box-shadow: 3px 3px 0 var(--ink);
+  }
+
+  .reservation-notification {
+    top: 12px;
+    padding: 12px;
+    font-size: 0.9rem;
   }
 
   .site-links a {

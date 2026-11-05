@@ -39,6 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content']) && is_stri
 }
 //===================================================================//
 ?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
   <head>
@@ -54,6 +55,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content']) && is_stri
 
 <body class="map-page">
 
+    <?php if (isset($_GET['horario_invalido']) || isset($_GET['horario_ocupado'])): ?>
+      <div class="reservation-notification" role="alert" aria-live="assertive">
+        <?= isset($_GET['horario_ocupado'])
+          ? 'Esse horário já está reservado para essa sala. Escolha outro.'
+          : 'O horário de término deve ser posterior ao horário de início.' ?>
+      </div>
+    <?php endif; ?>
+
+    <?php if ($selectedSlot == null): ?>
     <nav class="site-nav" aria-label="Navegação principal">
       <a class="site-brand" href="index.php">SARENH</a>
 
@@ -76,6 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content']) && is_stri
         ?>
       </div>
     </nav>
+    <?php endif; ?>
     
     <main class="main-container<?= $selectedSlot !== null ? ' has-selection' : '' ?>">
       <section class="slots-section">
@@ -88,7 +99,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content']) && is_stri
         </div>
       </section>
 
-      <?php if ($selectedSlot !== null): ?>
+<!----------------------------------------========================Bloco de espaço selecionado========================------------------------------------------->
+
+    <?php if ($selectedSlot !== null): ?>
         <section class="slot-info">
           <div class="selected-slot-header">
             <div>
@@ -137,9 +150,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content']) && is_stri
                   </tr>
                 </tbody>
               </table>
+              <!-- =====Botão para ver mais reservas===== -->
+            <button type="button" class="btn btn-primary" onclick="window.location.href='index.php'">Ver disponibilidades</button>
+            <!-- -------------------------------------- -->
             </div>
           </div>
-
+          
+          <!-----------------Se o usuario estiver logado, ele podera reservar o horario tudo continua no bloco----------------->
           <?php if ($isUserLoggedIn): ?>
             <div class="reservation-section">
               <div class="section-heading small-heading">
@@ -150,23 +167,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content']) && is_stri
               </div>
               <form method="POST" action="pcs_SlotReservation.php" class="reservation-form">
                 <input type="hidden" name="slot_id" value="<?= htmlspecialchars((string) $selectedSlot->getId(), ENT_QUOTES, 'UTF-8') ?>">
-                <?php if (isset($_GET['horario_invalido'])): ?>
-                  <p class="reservation-error" role="alert">O horário de término deve ser posterior ao horário de início.</p>
-                <?php endif; ?>
                 <div class="form-group">
                   <label for="topic">TÓPICO</label>
                   <input type="text" id="topic" name="topic" value="<?= htmlspecialchars($defaultTopic, ENT_QUOTES, 'UTF-8') ?>" required>
                 </div>
-                <div class="form-row">
-                  <div class="form-group">
-                    <label for="start_time">HORA DE INÍCIO</label>
-                    <input type="time" id="start_time" name="start_time" required>
-                  </div>
-                  <div class="form-group">
-                    <label for="end_time">HORA DE TÉRMINO</label>
-                    <input type="time" id="end_time" name="end_time" required>
-                  </div>
-                </div>
+
+      <!-----------------Bloco de horario e data----------------->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="start_time">HORA DE INÍCIO</label>
+            
+          <select id="start_time" name="start_time" required>
+            <option value="">Selecione</option>
+            <?php
+
+            $start = strtotime('07:30');
+            $limit = strtotime('22:00');
+            $duration = 45 * 60;
+
+            while ($start + $duration <= $limit) {
+              $end = $start + $duration;
+              $startTime = date('H:i', $start);
+              $endTime = date('H:i', $end);
+
+            ?>
+              <option value="<?= $startTime ?>"><?= $startTime ?></option>
+            <?php
+              $start = $end;
+            }
+            ?>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="end_time">HORA DE TÉRMINO</label>
+          <select id="end_time" name="end_time" required disabled>
+            <option value="">Selecione primeiro o horário de início</option>
+          </select>
+        </div>
+      </div>
+      <!---------------------------------------------------------->
                 <div class="form-group">
                   <label for="reservation_date">DATA</label>
                   <input type="date" id="reservation_date" name="reservation_date" required>
@@ -186,11 +225,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content']) && is_stri
             </div>
           <?php endif; ?>
         </section>
-      <?php elseif ($selecionado !== null): ?>
+    <?php elseif ($selecionado !== null): ?>
         <section class="slot-info">
           <p>O espaço selecionado não foi encontrado.</p>
         </section>
-      <?php endif; ?>
+    <?php endif; ?>
     </main>
     
 <svg
@@ -440,6 +479,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content']) && is_stri
   </g>
 </svg>
 
+  <?php if ($selectedSlot == null): ?>
     <nav class="map-controls" aria-label="Controles da planta">
       <button type="button" id="zoom-in" aria-label="Aumentar zoom">+</button>
       <button type="button" id="zoom-out" aria-label="Diminuir zoom">−</button>
@@ -450,6 +490,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content']) && is_stri
       Scroll: zoom · Arraste: movimentar<br>
       Clique em uma sala para selecioná-la
     </div>
+    <?php endif; ?> 
 <!--regiao-- MANIPULAÇÃO DO SVG -->
   <!------------Recebimento de dados do js > php--------------->
     <form id="formSelection" action="index.php" method="post">
@@ -459,6 +500,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content']) && is_stri
     <script>
       //-------------------------seleção de variaveis e adicao da funao room pra cada um
       document.addEventListener("DOMContentLoaded", () => {
+        const reservationNotification = document.querySelector(".reservation-notification");
+        if (reservationNotification) {
+          window.setTimeout(() => reservationNotification.remove(), 2500);
+        }
+
+        const startTimeSelect = document.getElementById("start_time");
+        const endTimeSelect = document.getElementById("end_time");
+
+        if (startTimeSelect && endTimeSelect) {
+          startTimeSelect.addEventListener("change", () => {
+            endTimeSelect.replaceChildren(new Option("Selecione", ""));
+
+            if (!startTimeSelect.value) {
+              endTimeSelect.options[0].text = "Selecione primeiro o horário de início";
+              endTimeSelect.disabled = true;
+              return;
+            }
+
+            const [startHour, startMinute] = startTimeSelect.value.split(":").map(Number);
+            const startMinutes = startHour * 60 + startMinute;
+            const limitMinutes = 22 * 60;
+            const durationMinutes = 45;
+
+            for (
+              let endMinutes = startMinutes + durationMinutes;
+              endMinutes <= limitMinutes;
+              endMinutes += durationMinutes
+            ) {
+              const hours = String(Math.floor(endMinutes / 60)).padStart(2, "0");
+              const minutes = String(endMinutes % 60).padStart(2, "0");
+              const time = `${hours}:${minutes}`;
+              endTimeSelect.add(new Option(time, time));
+            }
+
+            endTimeSelect.disabled = false;
+          });
+        }
+
         const map = document.getElementById("campus-map");
         const selectionInput = document.getElementById("Selected");
         const selectionForm = document.getElementById("formSelection");

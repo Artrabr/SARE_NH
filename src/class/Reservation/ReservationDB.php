@@ -11,6 +11,48 @@ class ReservationDB
         $this->pdo = $pdo;
     }
 
+    public function isReservationConflicting(
+        int $slotId,
+        string $reservationDate,
+        string $startTime,
+        string $endTime
+    ): bool
+    {
+        $conflictingReservations = $this->getReservationInThisRange(
+            $slotId,
+            $reservationDate,
+            $startTime,
+            $endTime
+        );
+        return !empty($conflictingReservations);
+    }
+
+    public function getReservationInThisRange(
+        int $slotId,
+        string $reservationDate,
+        string $startTime,
+        string $endTime
+    ): array
+    {
+        $sql = "SELECT reserved_slot_id
+            FROM `reservation`
+            WHERE reserved_slot_slot_id = :slot_id
+            AND reserved_slot_date = :reservation_date
+            AND reserved_slot_status IN ('pending', 'confirmed')
+            AND reserved_slot_start_time < :end_time
+            AND reserved_slot_end_time > :start_time";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([
+            'slot_id' => $slotId,
+            'reservation_date' => $reservationDate,
+            'start_time' => $startTime,
+            'end_time' => $endTime,
+        ]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function createReservation(
         int $userId,
         int $slotId,
@@ -24,6 +66,25 @@ class ReservationDB
     {
         if ($userId < 1 || $slotId < 1 || trim($topic) === '') {
             throw new InvalidArgumentException('A valid user, room, and non-empty topic are required');
+        }
+
+        if (
+            !preg_match('/^(?:[01]\d|2[0-3]):[0-5]\d$/', $startTime) ||
+            !preg_match('/^(?:[01]\d|2[0-3]):[0-5]\d$/', $endTime) ||
+            $endTime <= $startTime
+        ) {
+            throw new InvalidArgumentException('A valid reservation time range is required');
+        }
+
+        if (
+            !preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $reservationDate, $dateParts) ||
+            !checkdate((int) $dateParts[2], (int) $dateParts[3], (int) $dateParts[1])
+        ) {
+            throw new InvalidArgumentException('A valid reservation date is required');
+        }
+
+        if ($this->isReservationConflicting($slotId, $reservationDate, $startTime, $endTime)) {
+            throw new DomainException('The selected time conflicts with an existing reservation');
         }
 
         $stmt = $this->pdo->prepare(
