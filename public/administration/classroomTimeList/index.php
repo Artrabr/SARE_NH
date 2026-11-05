@@ -46,39 +46,70 @@ $slots = (new SlotDB(Connection::Connect()))->getAllSlots();
             <section class="panel table-panel">
                 <h1>Salas cadastradas</h1>
                 <div class="table-wrap">
-                   
+                    <table class="classroom-table">
                         <thead>
                             <tr>
-                                <th>Nome</th>
-                                <th>Identificação institucional</th>
-                                <th>Descrição</th>
+                                <th scope="col">Nome</th>
+                                <th scope="col">Identificação institucional</th>
+                                <th scope="col">Descrição</th>
                             </tr>
                         </thead>
+                        <tbody>
                             <?php if ($slots === []): ?>
                                 <tr>
-                                    <td colspan="4">Nenhuma sala cadastrada.</td>
+                                    <td colspan="3" class="empty-state">Nenhuma sala cadastrada.</td>
                                 </tr>
                             <?php else: ?>
                                 <?php foreach ($slots as $slot): ?>
-                                <form action="pcs_UpdateClassroomInfo.php" method="POST" class="classroom-form">
-                                    
-                                            <input type="hidden" name="classroom_id" value="<?= htmlspecialchars((string) $slot->getId(), ENT_QUOTES, 'UTF-8') ?>">
-                                            <input type="text" name="name" value="<?= htmlspecialchars($slot->getName(), ENT_QUOTES, 'UTF-8') ?>">
-                                            <input type="text" name="institutional_name" value="<?= htmlspecialchars($slot->getInstitutionalName(), ENT_QUOTES, 'UTF-8') ?>">
-                                            <input type="text" name="description" value="<?= htmlspecialchars($slot->getDescription(), ENT_QUOTES, 'UTF-8') ?>">
-                                </form>
+                                    <?php $formId = 'classroom-form-' . $slot->getId(); ?>
+                                    <tr>
+                                        <td>
+                                            <form id="<?= htmlspecialchars($formId, ENT_QUOTES, 'UTF-8') ?>" action="pcs_UpdateClassroomInfo.php" method="POST" class="classroom-form">
+                                                <input type="hidden" name="classroom_id" value="<?= htmlspecialchars((string) $slot->getId(), ENT_QUOTES, 'UTF-8') ?>">
+                                            </form>
+                                            <input
+                                                form="<?= htmlspecialchars($formId, ENT_QUOTES, 'UTF-8') ?>"
+                                                class="classroom-input"
+                                                type="text"
+                                                name="name"
+                                                aria-label="Nome da sala"
+                                                value="<?= htmlspecialchars($slot->getName(), ENT_QUOTES, 'UTF-8') ?>"
+                                            >
+                                        </td>
+                                        <td>
+                                            <input
+                                                form="<?= htmlspecialchars($formId, ENT_QUOTES, 'UTF-8') ?>"
+                                                class="classroom-input"
+                                                type="text"
+                                                name="institutional_name"
+                                                aria-label="Identificação institucional"
+                                                value="<?= htmlspecialchars($slot->getInstitutionalName(), ENT_QUOTES, 'UTF-8') ?>"
+                                            >
+                                        </td>
+                                        <td>
+                                            <input
+                                                form="<?= htmlspecialchars($formId, ENT_QUOTES, 'UTF-8') ?>"
+                                                class="classroom-input"
+                                                type="text"
+                                                name="description"
+                                                aria-label="Descrição da sala"
+                                                value="<?= htmlspecialchars($slot->getDescription(), ENT_QUOTES, 'UTF-8') ?>"
+                                            >
+                                        </td>
+                                    </tr>
                                 <?php endforeach; ?>
                             <?php endif; ?>
-                    
+                        </tbody>
+                    </table>
                 </div>
                 <a class="back-link" href="../index.php">Voltar para o painel administrativo</a>
             </section>
         </main>
     </div>
-</body>
-</html> 
-<script>
-    document.querySelectorAll('.classroom-form').forEach((form) => {
-        form.addEventListener('change', () => form.requestSubmit());
+    <script>
+    document.querySelectorAll('.classroom-input').forEach((input) => {
+        input.addEventListener('change', () => input.form.requestSubmit());
     });
 </script>
+</body>
+</html>
