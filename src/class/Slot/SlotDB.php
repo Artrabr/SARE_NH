@@ -69,6 +69,23 @@ class SlotDB
         return $slots;
     }
 
+    public function updateSlotInfo(int $id, string $name, string $institutionalName, string $description): void
+    {
+        $stmt = $this->pdo->prepare(
+            "UPDATE `slot`
+             SET slot_name = :name,
+                 slot_institutional_name = :institutional_name,
+                 slot_description = :description
+             WHERE slot_id = :id"
+        );
+        $stmt->execute([
+            'name' => $name,
+            'institutional_name' => $institutionalName,
+            'description' => $description,
+            'id' => $id,
+        ]);
+    }
+
     public function createSlot(string $name, string $institutionalName, string $description): ?Slot
     {
         try {

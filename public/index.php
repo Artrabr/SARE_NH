@@ -3,7 +3,7 @@
 require_once __DIR__ . '/../bootstrap.php';
 require_once CLASS_PATH . 'User/User.php';
 require_once CLASS_PATH . 'Teacher/Teacher.php';
-require_once CLASS_PATH . 'Slot/SlotDB.php';
+require_once SLOT_PATH . 'SlotDB.php';
 require_once DATA_PATH . 'Connection.php';
 //================================================//
 

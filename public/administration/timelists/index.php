@@ -5,7 +5,7 @@
     Auth::requireCategory('coordenador');
 
     require_once CLASS_PATH . 'Reservation/ReservationDB.php';
-    require_once CLASS_PATH . 'Slot/SlotDB.php';
+    require_once SLOT_PATH . 'SlotDB.php';
     require_once CLASS_PATH . 'User/UserDB.php';
     require_once DATA_PATH . 'Connection.php';
 

@@ -23,6 +23,7 @@ define('PROJECT_URL', rtrim($projectUrl, '/'));
 define('PUBLIC_URL', PROJECT_URL . '/public');
 define('SRC_PATH', PROJECT_ROOT . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR);
 define('CLASS_PATH', SRC_PATH . 'class' . DIRECTORY_SEPARATOR);
+define('SLOT_PATH', CLASS_PATH . 'Slot' . DIRECTORY_SEPARATOR);
 define('DATA_PATH', SRC_PATH . 'data' . DIRECTORY_SEPARATOR);
 define('LIBRARY_PATH', SRC_PATH . 'libraly' . DIRECTORY_SEPARATOR);
 
