@@ -689,14 +689,45 @@ body {
 }
 
 .table-wrapper {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
   border: 3px solid var(--ink);
   border-radius: 0;
   background: var(--surface);
 }
 
+.reservation-table {
+  width: 100%;
+  table-layout: fixed;
+}
+
 .reservation-table th,
 .reservation-table td {
+  padding: 7px 5px;
   border-bottom: 2px solid var(--ink);
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.reservation-table th:nth-child(1) { width: 29%; }
+.reservation-table th:nth-child(2),
+.reservation-table th:nth-child(3) { width: 13%; }
+.reservation-table th:nth-child(4) { width: 25%; }
+.reservation-table th:nth-child(5) { width: 20%; }
+
+.usuario {
+  min-width: 0;
+  gap: 5px;
+}
+
+.user-info {
+  min-width: 0;
+}
+
+.user-info strong {
+  overflow-wrap: anywhere;
 }
 
 .reservation-table th {
@@ -718,7 +749,8 @@ body {
   font-weight: 800;
 }
 
-.form-group input {
+.form-group input,
+.form-group select {
   border: 2px solid var(--ink);
   border-radius: 0;
   background: var(--surface);
@@ -726,21 +758,60 @@ body {
   color: var(--text);
 }
 
-.form-group input:focus {
+.form-group select {
+  width: 100%;
+  min-width: 0;
+  padding: 11px 12px;
+  font: inherit;
+}
+
+.form-group input:focus,
+.form-group select:focus {
   border-color: var(--ink);
   outline: 3px solid var(--accent);
   box-shadow: 2px 2px 0 var(--ink);
 }
 
+.form-group select:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
 .reserve-button,
-.warning-button {
+.warning-button,
+.btn.btn-primary {
   min-height: 46px;
   padding: 12px 16px;
-  border-color: var(--ink);
+  border: 2px solid var(--ink);
+  border-radius: 0;
   background: var(--accent);
+  box-shadow: 3px 3px 0 var(--ink);
   color: var(--on-accent);
   font-weight: 900;
   text-transform: uppercase;
+  cursor: pointer;
+}
+
+.btn.btn-primary {
+  min-height: 10px;
+  margin-top: 1px;
+  padding: 3.5px 10px;
+  box-shadow: 2px 2px 0 var(--ink);
+  font-size: 0.72rem;
+  font-weight: 500;
+}
+
+.reserve-button:hover,
+.warning-button:hover,
+.btn.btn-primary:hover {
+  background: var(--accent-hover);
+  color: var(--on-accent);
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--ink);
+}
+
+.btn.btn-primary:hover {
+  transform: translate(1px, 1px);
 }
 
 .close-button {

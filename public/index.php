@@ -150,10 +150,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content']) && is_stri
                   </tr>
                 </tbody>
               </table>
-              <!-- =====Botão para ver mais reservas===== -->
-            <button type="button" class="btn btn-primary" onclick="window.location.href='index.php'">Ver disponibilidades</button>
-            <!-- -------------------------------------- -->
             </div>
+            <button type="button" class="btn btn-primary" onclick="window.location.href='index.php'">Ver disponibilidades</button>
           </div>
           
           <!-----------------Se o usuario estiver logado, ele podera reservar o horario tudo continua no bloco----------------->
