@@ -1,7 +1,6 @@
 <?php
 
 require_once __DIR__ . '/../../../bootstrap.php';
-require_once CLASS_PATH . 'Auth/Auth.php';
 require_once DATA_PATH . 'Connection.php';
 require_once CLASS_PATH . 'Reservation/ReservationDB.php';
 

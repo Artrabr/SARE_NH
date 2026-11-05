@@ -45,38 +45,40 @@ $slots = (new SlotDB(Connection::Connect()))->getAllSlots();
         <main class="content">
             <section class="panel table-panel">
                 <h1>Salas cadastradas</h1>
-                <h2 style="color: red;">arrumar essa pagina. os campos tem q ser alteraveis pelo formulario e adicionar campo de interditado</h2>
                 <div class="table-wrap">
-                    <table>
+                   
                         <thead>
                             <tr>
-                                <th>ID</th>
                                 <th>Nome</th>
                                 <th>Identificação institucional</th>
                                 <th>Descrição</th>
                             </tr>
                         </thead>
-                        <tbody>
                             <?php if ($slots === []): ?>
                                 <tr>
                                     <td colspan="4">Nenhuma sala cadastrada.</td>
                                 </tr>
                             <?php else: ?>
                                 <?php foreach ($slots as $slot): ?>
-                                    <tr>
-                                        <td><?= htmlspecialchars((string) $slot->getId(), ENT_QUOTES, 'UTF-8') ?></td>
-                                        <td><?= htmlspecialchars($slot->getName(), ENT_QUOTES, 'UTF-8') ?></td>
-                                        <td><?= htmlspecialchars($slot->getInstitutionalName(), ENT_QUOTES, 'UTF-8') ?></td>
-                                        <td><?= htmlspecialchars($slot->getDescription(), ENT_QUOTES, 'UTF-8') ?></td>
-                                    </tr>
+                                <form action="pcs_UpdateClassroomInfo.php" method="POST" class="classroom-form">
+                                    
+                                            <input type="hidden" name="classroom_id" value="<?= htmlspecialchars((string) $slot->getId(), ENT_QUOTES, 'UTF-8') ?>">
+                                            <input type="text" name="name" value="<?= htmlspecialchars($slot->getName(), ENT_QUOTES, 'UTF-8') ?>">
+                                            <input type="text" name="institutional_name" value="<?= htmlspecialchars($slot->getInstitutionalName(), ENT_QUOTES, 'UTF-8') ?>">
+                                            <input type="text" name="description" value="<?= htmlspecialchars($slot->getDescription(), ENT_QUOTES, 'UTF-8') ?>">
+                                </form>
                                 <?php endforeach; ?>
                             <?php endif; ?>
-                        </tbody>
-                    </table>
+                    
                 </div>
                 <a class="back-link" href="../index.php">Voltar para o painel administrativo</a>
             </section>
         </main>
     </div>
 </body>
-</html>
+</html> 
+<script>
+    document.querySelectorAll('.classroom-form').forEach((form) => {
+        form.addEventListener('change', () => form.requestSubmit());
+    });
+</script>

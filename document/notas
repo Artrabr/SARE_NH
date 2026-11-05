@@ -1,0 +1,3 @@
+    eu acho q da pra resolver o problema de dados pegos pelo front se eu salvar as salas na sessão.
+como o meu usuario sempre vai estar logado então não é um problem desde que eu nao use os objetos
+da sessao no index, oq eu acho q eu nao vou fazer.
