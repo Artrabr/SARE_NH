@@ -48,7 +48,7 @@
                 <ul class="sidebar-nav">
                     <li><a href="../index.php">Painel</a></li>
                     <li><a href="index.php" class="active">Reservas</a></li>
-                    <li><a href="../classroomTimeList/index.php">Salas</a></li>
+                    <li><a href="../SlotsList/index.php">Salas</a></li>
                     <li><a href="../clientList/index.php">Usuários</a></li>
                 </ul>
             </nav>
