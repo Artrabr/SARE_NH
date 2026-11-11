@@ -63,14 +63,15 @@ try {
 }
 
 try {
-    $user = $userDB->createUser($username, $email, $_POST['password'], $_POST['category']);
+    $subject = $_POST['category'] === 'professor' ? trim($_POST['subject']) : null;
+    $user = $userDB->createUser($username, $email, $_POST['password'], $_POST['category'], $subject);
     if ($_POST['category'] === 'professor') {
         $user = new Teacher(
             $user->getId(),
             $user->getName(),
             $user->getEmail(),
             $user->getCategory(),
-            trim($_POST['subject'])
+            $subject
         );
     }
 } catch (DuplicateEmail $e) {

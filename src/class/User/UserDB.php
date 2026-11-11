@@ -82,16 +82,17 @@ class UserDB
         return is_string($hash) && password_verify($password, $hash);
     }
 
-    public function createUser(string $name, string $email, string $password, string $category): ?User
+    public function createUser(string $name, string $email, string $password, string $category, ?string $subject = null): ?User
     {
         $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
         try {
-            $stmt = $this->pdo->prepare("INSERT INTO `user` (user_name, user_email, user_password, user_category) VALUES (:name, :email, :password, :category)");
+            $stmt = $this->pdo->prepare("INSERT INTO `user` (user_name, user_email, user_password, user_category, user_subject) VALUES (:name, :email, :password, :category, :subject)");
             $stmt->execute([
                 'name' => $name,
                 'email' => $email,
                 'password' => $hashedPassword,
                 'category' => $category,
+                'subject' => $subject,
             ]);
             $id = (int) $this->pdo->lastInsertId();
             $admin = $this->setAdmin($category);

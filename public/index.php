@@ -81,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content']) && is_stri
         <?php
         else:
         ?>
-          <a href="user/perfil/index.php?<?= $_SESSION['obj_user']->getId()?>"><i class="fa-solid fa-user" class="icon"></i></a>
+          <a href="user/perfil/index.php?id=<?= $_SESSION['obj_user']->getId()?>"><i class="fa-solid fa-user" class="icon"></i></a>
         <?php
         endif;
         ?>

@@ -10,24 +10,24 @@ class TeacherDB {
 
     public function getTeacherByID(int $id): ?Teacher
     {
-        $stmt = $this->pdo->prepare("SELECT user_id, user_name, user_email, user_category, teacher_subject FROM `user` JOIN `teacher` ON user_id = teacher_user_id WHERE user_id = ?");
+        $stmt = $this->pdo->prepare("SELECT user_id, user_name, user_email, user_category, user_subject FROM `user` WHERE user_id = ? AND user_category = 'professor'");
         $stmt->execute([$id]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($row) {
-            return new Teacher((int) $row['user_id'], $row['user_name'], $row['user_email'], $row['user_category'], $row['teacher_subject']);
+            return new Teacher((int) $row['user_id'], $row['user_name'], $row['user_email'], $row['user_category'], (string) $row['user_subject']);
         }
         return null;
     }
 
     public function getTeacherByEmail(string $email): ?Teacher
     {
-        $stmt = $this->pdo->prepare("SELECT user_id, user_name, user_email, user_category, teacher_subject FROM `user` JOIN `teacher` ON user_id = teacher_user_id WHERE user_email = ?");
+        $stmt = $this->pdo->prepare("SELECT user_id, user_name, user_email, user_category, user_subject FROM `user` WHERE user_email = ? AND user_category = 'professor'");
         $stmt->execute([$email]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($row) {
-            return new Teacher((int) $row['user_id'], $row['user_name'], $row['user_email'], $row['user_category'], $row['teacher_subject']);
+            return new Teacher((int) $row['user_id'], $row['user_name'], $row['user_email'], $row['user_category'], (string) $row['user_subject']);
         }
         return null;
     }

@@ -18,16 +18,41 @@
 
 
     require_once __DIR__ . '/../../../bootstrap.php';
-    require_once CLASS_PATH . 'User/User.php';
-    require_once CLASS_PATH . 'Teacher/Teacher.php';
+    require_once CLASS_PATH . 'User/UserDB.php';
+    require_once CLASS_PATH . 'Teacher/TeacherDB.php';
+    require_once DATA_PATH . 'Connection.php';
 
-    $user = $_SESSION['obj_user'];
+    $user = $_SESSION['obj_user'] ?? null;
+    $profileId = filter_var($_GET['id'] ?? null, FILTER_VALIDATE_INT);
+    $profile = null;
+    $errorMessage = null;
 
-    if(!isset($user)){
-        $navegatorTitle = ${$user} . " | perfil";
-    }else{
-        $navegatorTitle = $user->getName();
+    if ($profileId === false || $profileId === null || $profileId < 1) {
+        http_response_code(400);
+        $errorMessage = 'O identificador do perfil é inválido.';
+    } else {
+        if($user !== null && $profileId == $user->getId()){
+            $profile = $user;
+        }
+
+        $pdo = Connection::Connect();
+        $profileDB = new UserDB($pdo);
+        $profile = $profileDB->getUserByID($profileId);
+
+        if ($profile !== null && $profile->getCategory() === 'professor') {
+            $teacherDB = new TeacherDB($pdo);
+            $profile = $teacherDB->getTeacherByID($profileId) ?? $profile;
+        }
+
+        if ($profile === null) {
+            http_response_code(404);
+            $errorMessage = 'Perfil não encontrado.';
+        }
     }
+
+    $navegatorTitle = $profile !== null
+        ? $profile->getName() . ' | perfil'
+        : 'Perfil';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -35,9 +60,55 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>
-    <?= $navegatorTitle ?>
+    <?= htmlspecialchars($navegatorTitle, ENT_QUOTES, 'UTF-8') ?>
     </title>
 </head>
 <body>
+    <?php
+//===================================PAGINA DO PERFIL===========================
+    if ($errorMessage !== null):
+    ?>
+    <h1><?= htmlspecialchars($errorMessage, ENT_QUOTES, 'UTF-8') ?></h1>
+    <?php
+    elseif($user === null || $user->getId() != $profileId):
+    ?>
+    <div>
+        <img src="" alt="Foto de perfil">
+        <div>
+            <h1><?= htmlspecialchars($profile->getName(), ENT_QUOTES, 'UTF-8') ?></h1>
+            <h3><?= htmlspecialchars($profile->getCategory(), ENT_QUOTES, 'UTF-8') ?></h3>
+            <?php if($profile instanceof Teacher): ?>
+                <p><?= htmlspecialchars($profile->getSubject(), ENT_QUOTES, 'UTF-8') ?></p>
+            <?php endif; ?>
+        </div>
+    </div>
+    <div>
+        <h2>Reservas</h2>
+
+    </div>
+    <?php
+    else:
+//===================================PAGINA DO USUARIO===========================
+    ?>
+    <div>
+        <img src="" alt="Foto de perfil">
+        <div>
+            <input name="name" style="<?php #h1 ?>" value="<?= htmlspecialchars($profile->getName(), ENT_QUOTES, 'UTF-8') ?>">
+            <input name="category" style="<?php #h3 ?>" value="<?= htmlspecialchars($profile->getCategory(), ENT_QUOTES, 'UTF-8') ?>">
+            <?php if($profile instanceof Teacher): //man, esssa foi a coisa mais genial q eu ja fiz ta KKKKKKKKKKK?>
+                <input name="category" style="<?php #p ?>" value="<?= htmlspecialchars($profile->getSubject(), ENT_QUOTES, 'UTF-8') ?>">
+            <?php
+                endif;    
+            ?>
+        </div>
+    </div>
+    <div>
+        <h2>Reservas</h2>
+
+    </div>
+    <?php
+    endif;
+    ?>
+    <a href="../../pcs_destroySession.php">deslogar</a>
 </body>
 </html>
