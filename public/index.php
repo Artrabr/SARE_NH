@@ -48,6 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content']) && is_stri
     <link rel="icon" type="image/x-icon" href=""><!--LOGO DO SITE-->
     <title>SARENH</title>
     <link href="public_css/index_style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
   </head>
 
@@ -80,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content']) && is_stri
         <?php
         else:
         ?>
-          <a href="#"></a> <!--ir para a pagina do usuario-->
+          <a href="user/perfil/index.php?<?= $_SESSION['obj_user']->getId()?>"><i class="fa-solid fa-user" class="icon"></i></a>
         <?php
         endif;
         ?>

@@ -1,0 +1,7 @@
+:root{
+    --defaultColor: rgb(255, 255, 255);
+}
+
+.icon{
+    color: (--defaultColor);
+}

@@ -31,7 +31,7 @@ function connect(){
 $requiredFields = ['email', 'password', 'username', 'category'];
 
 if(!checkData($_POST, $requiredFields)){
-    header('Location: ' . PUBLIC_URL . '/index.php?error=1');
+    header('Location: ' . PUBLIC_URL . '/index.php?error=requiredFields');
     exit();
 }
 $email = strtolower(trim($_POST['email']));
@@ -42,7 +42,7 @@ if ($_POST['category'] === 'professor' && (!isset($_POST['subject']) || trim($_P
     exit();
 }
 if (!isEmailDomainAllowed($email)) {
-    header('Location: ' . PUBLIC_URL . '/index.php?error=2');
+    header('Location: ' . PUBLIC_URL . '/index.php?error=emailNotAllowed');
     exit();
 } 
 

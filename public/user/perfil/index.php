@@ -17,14 +17,16 @@
 //-----------------------------------=|=-----------------------------------//
 
 
-    require_once __DIR__ . '/../../bootstrap.php';
+    require_once __DIR__ . '/../../../bootstrap.php';
     require_once CLASS_PATH . 'User/User.php';
     require_once CLASS_PATH . 'Teacher/Teacher.php';
 
-    if(!isset($_SESSION['obj_user'])){
-        $navegatorTitle = "Perfil";
+    $user = $_SESSION['obj_user'];
+
+    if(!isset($user)){
+        $navegatorTitle = ${$user} . " | perfil";
     }else{
-        $navegatorTitle = $_SESSION['obj_user']->getName();
+        $navegatorTitle = $user->getName();
     }
 ?>
 <!DOCTYPE html>
