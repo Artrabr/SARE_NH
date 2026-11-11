@@ -64,6 +64,17 @@ $slots = (new SlotDB(Connection::Connect()))->getAllSlots();
                                     <?php $formId = 'classroom-form-' . $slot->getId(); ?>
                                     <tr>
                                         <td>
+                                            <a href="
+                                            <!--tenho fazer ainda-->/nome q vou decidir#<?=htmlspecialchars($formId, ENT_QUOTES, 'UTF-8')?>>" 
+                                            class="classroom-input" 
+                                            name="institutional_name" 
+                                            aria-label="Identificação institucional"
+                                            >
+                                                
+                                                <?= htmlspecialchars($slot->getInstitutionalName(), ENT_QUOTES, 'UTF-8') ?>
+                                            </a>
+                                        </td>
+                                        <td>
                                             <form id="<?= htmlspecialchars($formId, ENT_QUOTES, 'UTF-8') ?>" action="pcs_UpdateClassroomInfo.php" method="POST" class="classroom-form">
                                                 <input type="hidden" name="classroom_id" value="<?= htmlspecialchars((string) $slot->getId(), ENT_QUOTES, 'UTF-8') ?>">
                                             </form>
@@ -74,16 +85,6 @@ $slots = (new SlotDB(Connection::Connect()))->getAllSlots();
                                                 name="name"
                                                 aria-label="Nome da sala"
                                                 value="<?= htmlspecialchars($slot->getName(), ENT_QUOTES, 'UTF-8') ?>"
-                                            >
-                                        </td>
-                                        <td>
-                                            <input
-                                                form="<?= htmlspecialchars($formId, ENT_QUOTES, 'UTF-8') ?>"
-                                                class="classroom-input"
-                                                type="text"
-                                                name="institutional_name"
-                                                aria-label="Identificação institucional"
-                                                value="<?= htmlspecialchars($slot->getInstitutionalName(), ENT_QUOTES, 'UTF-8') ?>"
                                             >
                                         </td>
                                         <td>

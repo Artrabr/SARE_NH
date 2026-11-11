@@ -223,16 +223,24 @@ body {
   min-width: 0;
   padding: 8px 4px;
   border: 0;
-  border-bottom: 1px solid transparent;
   border-radius: 0;
   background: transparent;
   color: inherit;
   font: inherit;
-  transition: border-color 0.15s ease, background-color 0.15s ease;
+  text-decoration: none;
+  transition: 0.15s ease;
+}
+
+.classroom-table .classroom-input:not(a) {
+  border-bottom: 1px solid transparent;
 }
 
 .classroom-table .classroom-input:hover {
   border-bottom-color: var(--accent);
+}
+
+.classroom-table .classroom-input:is(a):hover {
+  color: var(--accent);
 }
 
 .classroom-table .classroom-input:focus {
