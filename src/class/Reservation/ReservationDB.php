@@ -250,6 +250,64 @@ class ReservationDB
         return $reservations;
     }
 
+    public function getUserReservationByUserIdAndStatusAndPeriod(
+        int $userId,
+        string $status,
+        ?string $startDate = null,
+        ?string $endDate = null
+    ): array
+    {
+        if ($userId < 1 || !in_array($status, ['pending', 'confirmed', 'rejected', 'cancelled'], true)) {
+            throw new InvalidArgumentException('Invalid user ID or reservation status');
+        }
+
+        if ($startDate !== null && $endDate !== null && $startDate > $endDate) {
+            throw new InvalidArgumentException('The reservation date range is invalid');
+        }
+
+        $sql = 'SELECT reserved_slot.reserved_slot_id, reserved_slot.reserved_slot_user_id,
+                       reserved_slot.reserved_slot_slot_id, reserved_slot.reserved_slot_topic,
+                       reserved_slot.reserved_slot_start_time, reserved_slot.reserved_slot_end_time,
+                       reserved_slot.reserved_slot_date, reserved_slot.reserved_slot_reason,
+                       reserved_slot.reserved_slot_at, reserved_slot.reserved_slot_status
+                FROM `reservation` AS reserved_slot
+                WHERE reserved_slot.reserved_slot_user_id = ?
+                AND reserved_slot.reserved_slot_status = ?';
+        $parameters = [$userId, $status];
+
+        if ($startDate !== null) {
+            $sql .= ' AND reserved_slot.reserved_slot_date >= ?';
+            $parameters[] = $startDate;
+        }
+
+        if ($endDate !== null) {
+            $sql .= ' AND reserved_slot.reserved_slot_date <= ?';
+            $parameters[] = $endDate;
+        }
+
+        $sql .= ' ORDER BY reserved_slot.reserved_slot_date, reserved_slot.reserved_slot_start_time';
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($parameters);
+
+        $reservations = [];
+        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
+            $reservations[] = new Reservation(
+                (int) $row['reserved_slot_id'],
+                (int) $row['reserved_slot_user_id'],
+                (int) $row['reserved_slot_slot_id'],
+                $row['reserved_slot_topic'],
+                $row['reserved_slot_start_time'],
+                $row['reserved_slot_end_time'],
+                $row['reserved_slot_date'],
+                $row['reserved_slot_reason'],
+                $row['reserved_slot_at'],
+                $row['reserved_slot_status']
+            );
+        }
+
+        return $reservations;
+    }
+
     public function getAllReservation(): ?array
     //cria uma array com varios objetos reservation
     {
