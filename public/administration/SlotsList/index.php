@@ -13,6 +13,7 @@ $slots = (new SlotDB(Connection::Connect()))->getAllSlots();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="../../midia/img/icone-reservas-ifsul-nh.svg"><!--LOGO DO SITE-->
     <title>Registro de salas</title>
     <link rel="stylesheet" href="../index.css">
 </head>
@@ -49,8 +50,8 @@ $slots = (new SlotDB(Connection::Connect()))->getAllSlots();
                     <table class="classroom-table">
                         <thead>
                             <tr>
-                                <th scope="col">Nome</th>
                                 <th scope="col">Identificação institucional</th>
+                                <th scope="col">Nome</th>
                                 <th scope="col">Descrição</th>
                             </tr>
                         </thead>
@@ -61,22 +62,21 @@ $slots = (new SlotDB(Connection::Connect()))->getAllSlots();
                                 </tr>
                             <?php else: ?>
                                 <?php foreach ($slots as $slot): ?>
-                                    <?php $formId = 'classroom-form-' . $slot->getId(); ?>
+                                    <?php $formId = $slot->getId(); ?>
                                     <tr>
                                         <td>
-                                            <a href="
-                                            <!--tenho fazer ainda-->/nome q vou decidir#<?=htmlspecialchars($formId, ENT_QUOTES, 'UTF-8')?>>" 
+                                            <a href="./SlotInfo/index.php?id=<?=$formId?>>" 
                                             class="classroom-input" 
                                             name="institutional_name" 
                                             aria-label="Identificação institucional"
                                             >
-                                                
                                                 <?= htmlspecialchars($slot->getInstitutionalName(), ENT_QUOTES, 'UTF-8') ?>
                                             </a>
                                         </td>
                                         <td>
                                             <form id="<?= htmlspecialchars($formId, ENT_QUOTES, 'UTF-8') ?>" action="pcs_UpdateClassroomInfo.php" method="POST" class="classroom-form">
                                                 <input type="hidden" name="classroom_id" value="<?= htmlspecialchars((string) $slot->getId(), ENT_QUOTES, 'UTF-8') ?>">
+                                                <input type="hidden" name="institutional_name" value="<?= htmlspecialchars($slot->getInstitutionalName(), ENT_QUOTES, 'UTF-8') ?>">
                                             </form>
                                             <input
                                                 form="<?= htmlspecialchars($formId, ENT_QUOTES, 'UTF-8') ?>"
