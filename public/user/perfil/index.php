@@ -30,6 +30,7 @@
     $errorMessage = null;
     $reservations = [];
     $slotsById = [];
+    $showReservationHistory = ($_GET['showReservationHistory'] ?? '') === '1';
 
     if ($profileId === false || $profileId === null || $profileId < 1) {
         http_response_code(400);
@@ -130,6 +131,9 @@
                         <th>Status</th>
                     </tr>
                 </thead>
+            </table>
+            <?php if ($showReservationHistory): ?>
+            <table>
                 <tbody>
                     <?php if ($reservations === []): ?>
                         <tr>
@@ -158,6 +162,14 @@
                 </tbody>
             </table>
         </div>
+        <?php endif; ?>
+        <form action="index.php" method="get">
+            <input type="hidden" name="id" value="<?= htmlspecialchars((string) $profileId, ENT_QUOTES, 'UTF-8') ?>">
+            <input type="hidden" name="showReservationHistory" value="<?= $showReservationHistory ? '0' : '1' ?>">
+            <button type="submit">
+                <?= $showReservationHistory ? 'Ocultar reservas' : 'Mostrar reservas' ?>
+            </button>
+        </form>
     </div>
     <?php
     endif;
