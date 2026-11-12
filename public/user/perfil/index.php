@@ -104,7 +104,26 @@
     </div>
     <div>
         <h2>Reservas</h2>
-
+        <div>
+            <table>
+                <tr>
+                    <th>Sala</th>
+                    <th>Horario de Inicio</th>
+                    <th>Horario de Fim</th>
+                </tr>
+            <?php
+            
+            ?>
+                <tr>
+                    <td>exemplo</td>
+                    <td>2</td>
+                    <td>R$ 150,00</td>
+                </tr>
+            <?php
+            
+            ?>
+            <table>
+        </div>
     </div>
     <?php
     endif;
