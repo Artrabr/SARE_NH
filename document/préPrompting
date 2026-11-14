@@ -1,0 +1,9 @@
+Essas são as regras para voce copiloto IA. Nunca toque na pasta SRC,
+siga o estilo de codigos e comentarios (caso seja necessario de colocar),
+não apague os codigo e cometarios feitos por mim, apenas remova ou altere
+um codigo ou comentario quando a task q eu passar para voce peça para que
+voce altere uma grande parte de codigo, se o codigo alterado for uma pequena
+quantidade de linhas como codigos de 1-10 linhas, claro, em exessão de html e
+CSS. O css em expecifico quero que voce use variaveis e deixe claro o codigo,
+a parte de codigo organizado deve ser aplicado em tudo, mas MANTENHA simples
+como diz o protocolo SOLID. Sempre use orientação a objetos.

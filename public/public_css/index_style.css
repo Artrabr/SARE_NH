@@ -179,7 +179,7 @@ a {
   color: var(--text);
   font-size: 0.8rem;
   line-height: 1.6;
-  pointer-events: none;
+  pointer-events: auto;
 }
 
 .map-hint strong {
@@ -507,12 +507,12 @@ a {
 
   .map-hint {
     right: 12px;
-    bottom: 12px;
+    bottom: 128px;
     font-size: 0.7rem;
   }
 
   .slots-section {
-    bottom: 96px;
+    bottom: 12px;
     left: 12px;
     max-width: calc(100vw - 24px);
     padding: 13px;
@@ -643,6 +643,57 @@ body {
 
 .map-hint {
   color: var(--text);
+}
+
+.slots-section,
+.map-hint {
+  transition: transform 1s ease, opacity 1s ease;
+}
+
+.slots-section.is-dismissing,
+.map-hint.is-dismissing {
+  transform: translateX(110vw);
+  opacity: 0;
+  pointer-events: none;
+}
+
+#restoreInformationForm {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 40;
+}
+
+#restore-information {
+  display: grid;
+  width: 48px;
+  aspect-ratio: 1;
+  place-items: center;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 3px 3px 0 var(--ink);
+  color: var(--on-accent);
+  cursor: pointer;
+  font-size: 1.15rem;
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  transition: opacity 250ms ease, visibility 0s linear 250ms;
+}
+
+#restore-information:hover,
+#restore-information:focus-visible {
+  background: var(--accent-hover);
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--ink);
+}
+
+#restore-information.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+  transition: opacity 250ms ease;
 }
 
 .slots-section {

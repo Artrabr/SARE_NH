@@ -37,6 +37,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content']) && is_stri
     $selectedSlot = $slotDb->getSlotByInstitutionalName($selecionado);
   }
 }
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['restore_information'])) {
+  unset($_SESSION['slots_section_shown'], $_SESSION['map_hint_shown']);
+}
+
+$showSlotsInfo = $selectedSlot === null && empty($_SESSION['slots_section_shown']);
+$showMapHint = $selectedSlot === null && empty($_SESSION['map_hint_shown']);
+
+if ($showSlotsInfo) {
+  $_SESSION['slots_section_shown'] = true;
+}
+
+if ($showMapHint) {
+  $_SESSION['map_hint_shown'] = true;
+}
 //===================================================================//
 ?>
 
@@ -45,15 +60,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content']) && is_stri
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image/x-icon" href="midia/img/icone-reservas-ifsul-nh.svg"><!--LOGO DO SITE-->
+    <link rel="icon" type="image/x-icon" href=""><!--LOGO DO SITE-->
     <title>SARENH</title>
     <link href="public_css/index_style.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
   </head>
-
-
-
+  
 <body class="map-page">
 
     <?php if (isset($_GET['horario_invalido']) || isset($_GET['horario_ocupado'])): ?>
@@ -90,6 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content']) && is_stri
     <?php endif; ?>
     
     <main class="main-container<?= $selectedSlot !== null ? ' has-selection' : '' ?>">
+      <?php if ($showSlotsInfo): ?>
       <section class="slots-section">
         <div class="section-heading">
           <div>
@@ -99,6 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content']) && is_stri
           <span class="section-label">SELECIONE UMA SALA</span>
         </div>
       </section>
+      <?php endif; ?>
 
 <!----------------------------------------========================Bloco de espaço selecionado========================------------------------------------------->
 
@@ -484,11 +499,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content']) && is_stri
       <button type="button" id="zoom-out" aria-label="Diminuir zoom">−</button>
       <button type="button" id="reset-map" aria-label="Centralizar planta">⌖</button>
     </nav>
+    <?php if ($showMapHint): ?>
     <div class="map-hint">
       <strong>Navegação</strong><br>
       Scroll: zoom · Arraste: movimentar<br>
       Clique em uma sala para selecioná-la
     </div>
+    <?php endif; ?>
     <?php endif; ?> 
 <!--regiao-- MANIPULAÇÃO DO SVG -->
   <!------------Recebimento de dados do js > php--------------->
@@ -496,13 +513,71 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content']) && is_stri
         <input type="hidden" name="content" id="Selected">
     </form>
 
+    <?php if ($selectedSlot === null): ?>
+    <form id="restoreInformationForm" action="index.php" method="post">
+      <input type="hidden" name="restore_information" value="1">
+      <button
+        type="submit"
+        id="restore-information"
+        aria-label="Mostrar informações da planta"
+        title="Mostrar informações da planta"
+        >
+        <i class="fa-solid fa-lightbulb" aria-hidden="true"></i>
+      </button>
+    </form>
+    <?php endif; ?>
+
     <script>
       //-------------------------seleção de variaveis e adicao da funao room pra cada um
       document.addEventListener("DOMContentLoaded", () => {
-        const reservationNotification = document.querySelector(".reservation-notification");
-        if (reservationNotification) {
-          window.setTimeout(() => reservationNotification.remove(), 2500);
+        const informationBlocks = Array.from(document.querySelectorAll(
+          ".slots-section, .map-hint"
+        ));
+        const restoreInformationButton = document.getElementById("restore-information");
+        const restoreInformationForm = document.getElementById("restoreInformationForm");
+
+        const updateRestoreInformationButton = () => {
+          if (restoreInformationButton) {
+            const informationIsVisible = informationBlocks.some((block) => block.isConnected);
+            restoreInformationButton.classList.toggle("is-visible", !informationIsVisible);
+          }
+        };
+
+        updateRestoreInformationButton();
+
+        if (restoreInformationForm && restoreInformationButton) {
+          restoreInformationForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+            restoreInformationButton.classList.remove("is-visible");
+            window.setTimeout(() => restoreInformationForm.submit(), 250);
+          });
         }
+
+        informationBlocks.forEach((block, index) => {
+          const dismissBlock = () => {
+            if (block.classList.contains("is-dismissing")) {
+              return;
+            }
+
+            block.classList.add("is-dismissing");
+            window.setTimeout(() => {
+              block.remove();
+              updateRestoreInformationButton();
+            }, 1000);
+          };
+
+          block.tabIndex = 0;
+          block.addEventListener("pointerup", dismissBlock);
+          block.addEventListener("click", dismissBlock);
+          block.addEventListener("keydown", (event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              dismissBlock();
+            }
+          });
+
+          window.setTimeout(dismissBlock, 10000 + index * 250);
+        });
 
         const startTimeSelect = document.getElementById("start_time");
         const endTimeSelect = document.getElementById("end_time");
