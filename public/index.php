@@ -558,11 +558,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content']) && is_stri
             room.classList.add("selected");
           }
 
+          //---------mesmos codigos mas para diferentes dispositivos (qquestaao de acessibilidade)--------------
           const selectRoom = () => {
             selectionInput.value = label;
             selectionForm.requestSubmit();
           };
+//----------Primeira versão do duble click------------------
+// Cada clique é registrado e quando dois sao registrados   |
+// o codigo envia o formulario do html                      |
+//----------------------------------------------------------
+//          let totalOfTouches = 0;                         |
+//                                                          |
+//          const selectRoomTouch = () => {                 |
+//            totalOfTouches += 1;                          |
+//            if(totalOfTouches > 1){                       |
+//                //totalOfTouches = 0; --> ele é reiniciado|
+//                //na linha 567 pq a pagina atualiza       |
+//                //por conta do php                        |
+//              selectionInput.value = label;               |
+//              selectionForm.requestSubmit();              |
+//            }else{                                        |
+//              return;                                     | 
+//            }                                             | 
+//          };                                              | 
+//--------------------------------------------------------
+          let touchSlotDelay = 250
+          let totalOfTouches = 0;
 
+          const selectRoomTouch = () => { 
+//pra evira clique sem querer ele reseta o codigo dps de 250mils
+            totalOfTouches++;
+
+            timer = setTimeout(() => {
+              totalOfTouches = 0; // Zera se o usuário demorar demais
+            }, touchSlotDelay);
+
+            if(totalOfTouches > 1 && timer > 0){
+              selectionInput.value = label;             
+              selectionForm.requestSubmit();
+            }else if(!timer > 0){ //dps de um tempo x 
+              totalOfTouches = 0; //os cliques ficam = 0
+            }else{
+              return;
+            }
+          };
+
+          room.addEventListener("touchend", selectRoomTouch);
           room.addEventListener("click", selectRoom);
           room.addEventListener("keydown", (event) => {
             if (event.key === "Enter" || event.key === " ") {
@@ -583,7 +624,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content']) && is_stri
           controlIconsEnabled: false,
           mouseWheelZoomEnabled: true,
           preventMouseEventsDefault: true,
-          dblClickZoomEnabled: true,
+          dblClickZoomEnabled: false,
           pinchZoomEnabled: true,
           minZoom: 0.5,
           maxZoom: 12,
