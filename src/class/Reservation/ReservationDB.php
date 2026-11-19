@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . "/Reservation.php";
+require_once __DIR__ . "/ReservationSearchResult.php";
 
 class ReservationDB
 {
@@ -9,6 +10,130 @@ class ReservationDB
     public function __construct(PDO $pdo)
     {
         $this->pdo = $pdo;
+    }
+
+    /*
+     Busca reservas que comecam dentro do intervalo informado.
+    
+     Diferente dos metodos que retornam linhas associativas do PDO, este
+     metodo transforma cada resultado em um ReservationSearchResult.
+     Assim, os dados retornados nao dependem diretamente dos nomes das
+     colunas usadas na consulta SQL.
+    
+     Exemplo de uso:
+    
+     $reservationDB = new ReservationDB(Connection::Connect());
+     $reservations = $reservationDB->findOccupiedReservations('12:00', '15:00');
+    
+     foreach ($reservations as $reservation) {
+         echo $reservation->getUserName();
+         echo $reservation->getSlotName();
+         echo $reservation->getTopic();
+     }
+    
+     Os horarios devem estar no formato HH:MM. Se nao houver reservas,
+     o retorno sera um array vazio.
+    
+     se divirta filhao :D
+     
+     @return ReservationSearchResult[]
+     */
+    public function findOccupiedReservations(string $timeStart, string $endTime): array
+    {
+        $stmt = $this->pdo->prepare(
+            'SELECT
+                user.user_name,
+                user.user_email,
+                slot.slot_name,
+                slot.slot_institutional_name,
+                reservation.reserved_slot_topic,
+                reservation.reserved_slot_start_time,
+                reservation.reserved_slot_end_time
+             FROM `user`
+             INNER JOIN reservation
+                ON user.user_id = reservation.reserved_slot_user_id
+             INNER JOIN slot
+                ON slot.slot_id = reservation.reserved_slot_slot_id
+             WHERE reservation.reserved_slot_start_time BETWEEN ? AND ?
+             ORDER BY reservation.reserved_slot_start_time'
+        );
+        $stmt->execute([$timeStart, $endTime]);
+
+        $results = [];
+        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
+            $results[] = new ReservationSearchResult(
+                $row['user_name'],
+                $row['user_email'],
+                $row['slot_name'],
+                $row['slot_institutional_name'],
+                $row['reserved_slot_topic'],
+                $row['reserved_slot_start_time'],
+                $row['reserved_slot_end_time']
+            );
+        }
+
+        return $results;
+    }
+
+    /*
+    Busca as reservas de um usuario que comecam dentro do intervalo informado.
+    
+    Exemplo de uso:
+    
+    $reservationDB = new ReservationDB(Connection::Connect());
+    $reservations = $reservationDB->findOccupiedReservationsByUserId(12, '12:00', '15:00');
+    
+    foreach ($reservations as $reservation) {
+        echo $reservation->getUserName();
+        echo $reservation->getSlotName();
+        echo $reservation->getTopic();
+    }
+    
+    O primeiro argumento e o ID do usuario. Os horarios devem estar no
+    formato HH:MM. Se nao houver reservas, o retorno sera um array vazio.
+    
+    @return ReservationSearchResult[]
+     */
+    public function findOccupiedReservationsByUserId(int $userId,string $timeStart,string $endTime): array 
+    {
+        if ($userId < 1) {
+            throw new InvalidArgumentException('A valid user ID is required');
+        }
+
+        $stmt = $this->pdo->prepare(
+            'SELECT
+                user.user_name,
+                user.user_email,
+                slot.slot_name,
+                slot.slot_institutional_name,
+                reservation.reserved_slot_topic,
+                reservation.reserved_slot_start_time,
+                reservation.reserved_slot_end_time
+             FROM `user`
+             INNER JOIN reservation
+                ON user.user_id = reservation.reserved_slot_user_id
+             INNER JOIN slot
+                ON slot.slot_id = reservation.reserved_slot_slot_id
+             WHERE reservation.reserved_slot_start_time BETWEEN ? AND ?
+             AND reservation.reserved_slot_user_id = ?
+             ORDER BY reservation.reserved_slot_start_time'
+        );
+        $stmt->execute([$timeStart, $endTime, $userId]);
+
+        $results = [];
+        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
+            $results[] = new ReservationSearchResult(
+                $row['user_name'],
+                $row['user_email'],
+                $row['slot_name'],
+                $row['slot_institutional_name'],
+                $row['reserved_slot_topic'],
+                $row['reserved_slot_start_time'],
+                $row['reserved_slot_end_time']
+            );
+        }
+
+        return $results;
     }
 
     public function isReservationConflicting(

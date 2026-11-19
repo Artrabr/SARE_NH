@@ -106,4 +106,24 @@ class UserDB
             throw $e;
         }
     }
+
 }
+/*
+SELECT user.user_name, user.user_email, reservation.reserved_slot_topic, reservation.reserved_slot_start_time, reservation.reserved_slot_end_time
+FROM user
+inner JOIN reservation
+ON user.user_id = reservation.reserved_slot_user_id
+WHERE reservation.reserved_slot_start_time BETWEEN '12:00:00' AND '15:00:00';
+-----------------------------------------------
+$stmt = $this->pdo->prepare("SELECT user_id, user_name, user_email, user_category FROM `user` WHERE user_email = ?");
+        $stmt->execute([$email]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$row) {
+            return null;
+        }
+
+        $admin = $this->setAdmin($row['user_category']);
+
+        return new User((int) $row['user_id'], $row['user_name'], $row['user_email'], $row['user_category'],$admin);
+*/

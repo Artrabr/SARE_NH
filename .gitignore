@@ -22,4 +22,3 @@ rad.json
 #Test results file
 TestResults.xml
 /.ddev
-/db_constants.php
