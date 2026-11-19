@@ -3,22 +3,17 @@
 require_once __DIR__ . '/../bootstrap.php';
 require_once CLASS_PATH . 'User/User.php';
 require_once CLASS_PATH . 'Teacher/Teacher.php';
-require_once SLOT_PATH . 'SlotDB.php';
-require_once DATA_PATH . 'Connection.php';
 //================================================//
 
 //----------------Declaracao de topo-----------------//
 $isUserLoggedIn = isset($_SESSION['obj_user']);
-$slotDb = new SlotDB(Connection::Connect());
-$slots = $slotDb->getAllSlots();
-$slotId = filter_input(INPUT_GET, 'slot_id', FILTER_VALIDATE_INT);
-$selectedSlot = null;
+$initialSlotId = filter_input(INPUT_GET, 'slot_id', FILTER_VALIDATE_INT);
+$initialSlotId = $initialSlotId !== false && $initialSlotId !== null && $initialSlotId > 0
+  ? (string) $initialSlotId
+  : '';
+$hasInitialSelection = $initialSlotId !== '';
 $admin = 'coordenador';
 //---------------------------------------------------//
-
-if ($slotId !== false && $slotId !== null && $slotId > 0) { //verifica se nao tem jeito nem um de estar null, mas de jeito nem um mesmo, impressionante
-  $selectedSlot = $slotDb->getSlotByID($slotId);
-}
 
 //------------------------------definir o topico padrao da aula-------------------------------//
 $defaultTopic = ''; 
@@ -28,22 +23,12 @@ if ($isUserLoggedIn && method_exists($_SESSION['obj_user'], 'getDefaultReservati
 }
 //============================================================================================//
 
-//----------------Manipulação-do-dado-em-php-do-svg-----------------//
-$selecionado = null;
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content']) && is_string($_POST['content'])) {
-  $selecionado = trim($_POST['content']);
-  if ($selecionado !== '') {
-    $selectedSlot = $slotDb->getSlotByInstitutionalName($selecionado);
-  }
-}
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['restore_information'])) {
   unset($_SESSION['slots_section_shown'], $_SESSION['map_hint_shown']);
 }
 
-$showSlotsInfo = $selectedSlot === null && empty($_SESSION['slots_section_shown']);
-$showMapHint = $selectedSlot === null && empty($_SESSION['map_hint_shown']);
+$showSlotsInfo = !$hasInitialSelection && empty($_SESSION['slots_section_shown']);
+$showMapHint = !$hasInitialSelection && empty($_SESSION['map_hint_shown']);
 
 if ($showSlotsInfo) {
   $_SESSION['slots_section_shown'] = true;
@@ -77,8 +62,7 @@ if ($showMapHint) {
       </div>
     <?php endif; ?>
 
-    <?php if ($selectedSlot == null): ?>
-    <nav class="site-nav" aria-label="Navegação principal">
+    <nav id="site-nav" class="site-nav" aria-label="Navegação principal"<?= $hasInitialSelection ? ' hidden' : '' ?>>
       <a class="site-brand" href="index.php">SARENH</a>
 
       <div class="site-links">
@@ -100,9 +84,8 @@ if ($showMapHint) {
         ?>
       </div>
     </nav>
-    <?php endif; ?>
     
-    <main class="main-container<?= $selectedSlot !== null ? ' has-selection' : '' ?>">
+    <main id="main-container" class="main-container<?= $hasInitialSelection ? ' has-selection' : '' ?>">
       <?php if ($showSlotsInfo): ?>
       <section class="slots-section">
         <div class="section-heading">
@@ -115,22 +98,20 @@ if ($showMapHint) {
       </section>
       <?php endif; ?>
 
-<!----------------------------------------========================Bloco de espaço selecionado========================------------------------------------------->
-
-    <?php if ($selectedSlot !== null): ?>
-        <section class="slot-info">
+      <template id="slot-info-template">
+        <section class="slot-info" aria-label="Informações do espaço selecionado">
           <div class="selected-slot-header">
             <div>
               <span class="selected-label">ESPAÇO SELECIONADO</span>
-              <h2><?= htmlspecialchars($selectedSlot->getInstitutionalName(), ENT_QUOTES, 'UTF-8') ?></h2>
-              <p class="slot-name"><?= htmlspecialchars($selectedSlot->getName(), ENT_QUOTES, 'UTF-8') ?></p>
+              <h2 data-slot-institutional-name></h2>
+              <p class="slot-name" data-slot-name></p>
             </div>
-            <a class="close-button" href="index.php" aria-label="Voltar ao mapa">×</a>
+            <button type="button" class="close-button" data-close-slot aria-label="Voltar ao mapa">×</button>
           </div>
 
           <div class="description-card">
             <span class="card-label">DESCRIÇÃO</span>
-            <p><?= htmlspecialchars($selectedSlot->getDescription(), ENT_QUOTES, 'UTF-8') ?></p>
+            <p data-slot-description></p>
           </div>
 
           <div class="reserved-section">
@@ -167,7 +148,7 @@ if ($showMapHint) {
                 </tbody>
               </table>
             </div>
-            <button type="button" class="btn btn-primary" onclick="window.location.href='index.php'">Ver disponibilidades</button>
+            <button type="button" class="btn btn-primary" data-close-slot>Ver disponibilidades</button>
           </div>
           
           <!-----------------Se o usuario estiver logado, ele podera reservar o horario tudo continua no bloco----------------->
@@ -180,7 +161,7 @@ if ($showMapHint) {
                 </div>
               </div>
               <form method="POST" action="pcs_SlotReservation.php" class="reservation-form">
-                <input type="hidden" name="slot_id" value="<?= htmlspecialchars((string) $selectedSlot->getId(), ENT_QUOTES, 'UTF-8') ?>">
+                <input type="hidden" name="slot_id" value="">
                 <div class="form-group">
                   <label for="topic">TÓPICO</label>
                   <input type="text" id="topic" name="topic" value="<?= htmlspecialchars($defaultTopic, ENT_QUOTES, 'UTF-8') ?>" required>
@@ -239,11 +220,8 @@ if ($showMapHint) {
             </div>
           <?php endif; ?>
         </section>
-    <?php elseif ($selecionado !== null): ?>
-        <section class="slot-info">
-          <p>O espaço selecionado não foi encontrado.</p>
-        </section>
-    <?php endif; ?>
+      </template>
+      <div id="slot-feedback" class="slot-feedback" role="status" aria-live="polite" hidden></div>
     </main>
     
 <svg
@@ -253,7 +231,7 @@ if ($showMapHint) {
    version="1.1"
    preserveAspectRatio="xMidYMid meet"
    id="campus-map"
-   data-selected-slot="<?= $selectedSlot !== null ? htmlspecialchars($selectedSlot->getInstitutionalName(), ENT_QUOTES, 'UTF-8') : '' ?>"
+   data-selected-slot-id="<?= htmlspecialchars($initialSlotId, ENT_QUOTES, 'UTF-8') ?>"
    inkscape:export-filename="mapacampus.svg"
    inkscape:export-xdpi="96"
    inkscape:export-ydpi="96"
@@ -492,29 +470,14 @@ if ($showMapHint) {
          y="174.35834">b2-01</tspan></text>
   </g>
 </svg>
-
-  <?php if ($selectedSlot == null): ?>
-    <nav class="map-controls" aria-label="Controles da planta">
-      <button type="button" id="zoom-in" aria-label="Aumentar zoom">+</button>
-      <button type="button" id="zoom-out" aria-label="Diminuir zoom">−</button>
-      <button type="button" id="reset-map" aria-label="Centralizar planta">⌖</button>
-    </nav>
     <?php if ($showMapHint): ?>
     <div class="map-hint">
       <strong>Navegação</strong><br>
       Scroll: zoom · Arraste: movimentar<br>
       Clique em uma sala para selecioná-la
     </div>
-    <?php endif; ?>
     <?php endif; ?> 
-<!--regiao-- MANIPULAÇÃO DO SVG -->
-  <!------------Recebimento de dados do js > php--------------->
-    <form id="formSelection" action="index.php" method="post">
-        <input type="hidden" name="content" id="Selected">
-    </form>
-
-    <?php if ($selectedSlot === null): ?>
-    <form id="restoreInformationForm" action="index.php" method="post">
+    <form id="restoreInformationForm" action="index.php" method="post"<?= $hasInitialSelection ? ' hidden' : '' ?>>
       <input type="hidden" name="restore_information" value="1">
       <button
         type="submit"
@@ -525,7 +488,6 @@ if ($showMapHint) {
         <i class="fa-solid fa-lightbulb" aria-hidden="true"></i>
       </button>
     </form>
-    <?php endif; ?>
 
     <script>
       //-------------------------seleção de variaveis e adicao da funao room pra cada um
@@ -579,10 +541,22 @@ if ($showMapHint) {
           window.setTimeout(dismissBlock, 10000 + index * 250);
         });
 
-        const startTimeSelect = document.getElementById("start_time");
-        const endTimeSelect = document.getElementById("end_time");
+        const map = document.getElementById("campus-map");
+        const mainContainer = document.getElementById("main-container");
+        const siteNav = document.getElementById("site-nav");
+        const slotTemplate = document.getElementById("slot-info-template");
+        const slotFeedback = document.getElementById("slot-feedback");
+        let currentSlotPanel = null;
+        let selectionRequest = 0;
 
-        if (startTimeSelect && endTimeSelect) {
+        const initializeReservationForm = (panel) => {
+          const startTimeSelect = panel.querySelector("#start_time");
+          const endTimeSelect = panel.querySelector("#end_time");
+
+          if (!startTimeSelect || !endTimeSelect) {
+            return;
+          }
+
           startTimeSelect.addEventListener("change", () => {
             endTimeSelect.replaceChildren(new Option("Selecione", ""));
 
@@ -610,17 +584,106 @@ if ($showMapHint) {
 
             endTimeSelect.disabled = false;
           });
-        }
+        };
 
-        const map = document.getElementById("campus-map");
-        const selectionInput = document.getElementById("Selected");
-        const selectionForm = document.getElementById("formSelection");
         const rooms = Array.from(map.querySelectorAll("rect"))
+          .filter((room) => room.hasAttribute("inkscape:label"));
 
-        .filter((room) => room.hasAttribute("inkscape:label"));
+        const closeSlotPanel = () => {
+          selectionRequest++;
+          if (currentSlotPanel) {
+            currentSlotPanel.remove();
+            currentSlotPanel = null;
+          }
+          mainContainer.classList.remove("has-selection");
+          siteNav.hidden = false;
+          restoreInformationForm.hidden = false;
+          slotFeedback.hidden = true;
+          slotFeedback.textContent = "";
+          map.removeAttribute("aria-busy");
+          rooms.forEach((room) => room.classList.remove("selected"));
+          window.history.replaceState(null, "", "index.php");
+          updateRestoreInformationButton();
+        };
 
-        const selectedSlot = map.dataset.selectedSlot.toLowerCase();
-        
+        const renderSlot = (slot) => {
+          const panel = slotTemplate.content.firstElementChild.cloneNode(true);
+          panel.querySelector("[data-slot-institutional-name]").textContent = slot.institutionalName;
+          panel.querySelector("[data-slot-name]").textContent = slot.name;
+          panel.querySelector("[data-slot-description]").textContent = slot.description;
+          const reservationSlotId = panel.querySelector('input[name="slot_id"]');
+          if (reservationSlotId) {
+            reservationSlotId.value = slot.id;
+          }
+          panel.querySelectorAll("[data-close-slot]").forEach((button) => {
+            button.addEventListener("click", closeSlotPanel);
+          });
+
+          if (currentSlotPanel) {
+            currentSlotPanel.remove();
+          }
+          currentSlotPanel = panel;
+          mainContainer.append(panel);
+          mainContainer.classList.add("has-selection");
+          siteNav.hidden = true;
+          restoreInformationForm.hidden = true;
+          informationBlocks.forEach((block) => block.remove());
+          rooms.forEach((room) => {
+            const label = room.getAttribute("inkscape:label");
+            room.classList.toggle(
+              "selected",
+              label.toLowerCase() === slot.institutionalName.toLowerCase()
+            );
+          });
+          initializeReservationForm(panel);
+        };
+
+        const loadSlot = async (parameters) => {
+          const requestNumber = ++selectionRequest;
+          const endpoint = new URL("api/slot.php", window.location.href);
+          Object.entries(parameters).forEach(([key, value]) => {
+            endpoint.searchParams.set(key, value);
+          });
+          map.setAttribute("aria-busy", "true");
+          slotFeedback.textContent = "Carregando os dados da sala...";
+          slotFeedback.hidden = false;
+
+          try {
+            const response = await fetch(endpoint, {
+              headers: { Accept: "application/json" }
+            });
+            const slot = await response.json();
+
+            if (requestNumber !== selectionRequest) {
+              return;
+            }
+
+            if (!response.ok) {
+              slotFeedback.textContent = slot.error || "Não foi possível encontrar esta sala.";
+              return;
+            }
+
+            renderSlot(slot);
+            slotFeedback.hidden = true;
+            slotFeedback.textContent = "";
+
+            const pageUrl = new URL(window.location.href);
+            pageUrl.search = "";
+            pageUrl.searchParams.set("slot_id", slot.id);
+            window.history.replaceState(null, "", pageUrl);
+          } catch (error) {
+            if (requestNumber !== selectionRequest) {
+              return;
+            }
+
+            console.error("Erro ao carregar os dados da sala.", error);
+            slotFeedback.textContent = "Não foi possível carregar os dados da sala. Tente novamente.";
+          } finally {
+            if (requestNumber === selectionRequest) {
+              map.removeAttribute("aria-busy");
+            }
+          }
+        };
 
         rooms.forEach((room) => {
           room.classList.add("room");
@@ -629,36 +692,15 @@ if ($showMapHint) {
 
           const label = room.getAttribute("inkscape:label");
           room.setAttribute("aria-label", `Selecionar ${label}`);
-          if (label.toLowerCase() === selectedSlot) {
-            room.classList.add("selected");
-          }
 
           //---------mesmos codigos mas para diferentes dispositivos (qquestaao de acessibilidade)--------------
           const selectRoom = () => {
-            selectionInput.value = label;
-            selectionForm.requestSubmit();
+            loadSlot({ institutional_name: label });
           };
-//----------Primeira versão do duble click------------------
-// Cada clique é registrado e quando dois sao registrados   |
-// o codigo envia o formulario do html                      |
-//----------------------------------------------------------
-//          let totalOfTouches = 0;                         |
-//                                                          |
-//          const selectRoomTouch = () => {                 |
-//            totalOfTouches += 1;                          |
-//            if(totalOfTouches > 1){                       |
-//                //totalOfTouches = 0; --> ele é reiniciado|
-//                //na linha 567 pq a pagina atualiza       |
-//                //por conta do php                        |
-//              selectionInput.value = label;               |
-//              selectionForm.requestSubmit();              |
-//            }else{                                        |
-//              return;                                     | 
-//            }                                             | 
-//          };                                              | 
-//--------------------------------------------------------
+
           let touchSlotDelay = 250
           let totalOfTouches = 0;
+          let timer;
 
           const selectRoomTouch = () => { 
 //pra evira clique sem querer ele reseta o codigo dps de 250mils
@@ -669,8 +711,7 @@ if ($showMapHint) {
             }, touchSlotDelay);
 
             if(totalOfTouches > 1 && timer > 0){
-              selectionInput.value = label;             
-              selectionForm.requestSubmit();
+              selectRoom();
             }else if(!timer > 0){ //dps de um tempo x 
               totalOfTouches = 0; //os cliques ficam = 0
             }else{
@@ -687,6 +728,10 @@ if ($showMapHint) {
             }
           });
         });
+
+        if (map.dataset.selectedSlotId) {
+          loadSlot({ id: map.dataset.selectedSlotId });
+        }
 
         if (typeof svgPanZoom !== "function") {
           console.error("A biblioteca de navegação da planta não foi carregada.");
@@ -708,13 +753,23 @@ if ($showMapHint) {
           center: true
         });
 
-        document.getElementById("zoom-in").addEventListener("click", () => navigation.zoomIn());
-        document.getElementById("zoom-out").addEventListener("click", () => navigation.zoomOut());
-        document.getElementById("reset-map").addEventListener("click", () => {
-          navigation.resetZoom();
-          navigation.fit();
-          navigation.center();
-        });
+        const zoomInButton = document.getElementById("zoom-in");
+        const zoomOutButton = document.getElementById("zoom-out");
+        const resetMapButton = document.getElementById("reset-map");
+
+        if (zoomInButton) {
+          zoomInButton.addEventListener("click", () => navigation.zoomIn());
+        }
+        if (zoomOutButton) {
+          zoomOutButton.addEventListener("click", () => navigation.zoomOut());
+        }
+        if (resetMapButton) {
+          resetMapButton.addEventListener("click", () => {
+            navigation.resetZoom();
+            navigation.fit();
+            navigation.center();
+          });
+        }
       });
         
 

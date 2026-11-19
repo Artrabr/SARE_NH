@@ -119,6 +119,10 @@ a {
   border-radius: 12px;
 }
 
+.site-nav[hidden] {
+  display: none;
+}
+
 .site-brand {
   color: var(--accent);
   font-size: 1rem;
@@ -298,11 +302,13 @@ a {
   flex: 0 0 38px;
   width: 38px;
   height: 38px;
+  padding: 0;
   place-items: center;
   border: 1px solid var(--border);
   border-radius: 10px;
   background: var(--panel);
   color: var(--text);
+  cursor: pointer;
   font-size: 1.4rem;
   line-height: 1;
   text-decoration: none;
@@ -884,6 +890,26 @@ body {
   font-weight: 800;
   text-align: center;
   animation: reservation-notification-out 5s ease forwards;
+}
+
+.slot-feedback {
+  position: fixed;
+  z-index: 100;
+  top: 20px;
+  left: 50%;
+  width: min(520px, calc(100vw - 32px));
+  padding: 12px 16px;
+  transform: translateX(-50%);
+  border: 3px solid var(--ink);
+  background: var(--surface);
+  box-shadow: 4px 4px 0 var(--ink);
+  color: var(--text);
+  font-weight: 700;
+  text-align: center;
+}
+
+.slot-feedback[hidden] {
+  display: none;
 }
 
 @keyframes reservation-notification-out {
