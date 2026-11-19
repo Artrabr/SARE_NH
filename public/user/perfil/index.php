@@ -78,105 +78,62 @@
         : 'Perfil';
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="../../midia/img/icone-reservas-ifsul-nh.svg"><!--LOGO DO SITE-->
+    <link rel="stylesheet" href="perfil.css">
     <title>
     <?= htmlspecialchars($navegatorTitle, ENT_QUOTES, 'UTF-8') ?>
     </title>
 </head>
 <body>
+    <main class="profile-page">
     <?php
 //===================================PAGINA DO PERFIL===========================
     if ($errorMessage !== null):
     ?>
-    <h1><?= htmlspecialchars($errorMessage, ENT_QUOTES, 'UTF-8') ?></h1>
+    <section class="profile-section">
+        <h1><?= htmlspecialchars($errorMessage, ENT_QUOTES, 'UTF-8') ?></h1>
+    </section>
     <?php
     elseif($user === null || $user->getId() != $profileId):
     ?>
-    <div>
-        <img src="" alt="Foto de perfil">
-        <div>
+    <header class="profile-header">
+        <img class="profile-avatar" src="icone-perfil.svg" alt="Ícone de perfil">
+        <div class="profile-identity">
             <h1><?= htmlspecialchars($profile->getName(), ENT_QUOTES, 'UTF-8') ?></h1>
-            <h3><?= htmlspecialchars($profile->getCategory(), ENT_QUOTES, 'UTF-8') ?></h3>
+            <h2><?= htmlspecialchars($profile->getCategory(), ENT_QUOTES, 'UTF-8') ?></h2>
             <?php if($profile instanceof Teacher): ?>
-                <p><?= htmlspecialchars($profile->getSubject(), ENT_QUOTES, 'UTF-8') ?></p>
+                <p class="profile-subject"><?= htmlspecialchars($profile->getSubject(), ENT_QUOTES, 'UTF-8') ?></p>
             <?php endif; ?>
         </div>
-    </div>
-    <div>
-        <h2>Historico de reservas</h2>
-        <p>Os Historico de reservas são visíveis apenas no perfil do próprio usuário.</p>
-    </div>
+    </header>
+    <section class="profile-section">
+        <h2>Histórico de reservas</h2>
+        <p>O histórico de reservas é visível apenas no perfil do próprio usuário.</p>
+    </section>
     <?php
     else:
 //===================================PAGINA DO USUARIO===========================
     ?>
-    <div>
-        <img src="" alt="Foto de perfil">
-        <div>
-            <input name="name" style="<?php #h1 ?>" value="<?= htmlspecialchars($profile->getName(), ENT_QUOTES, 'UTF-8') ?>">
-            <input name="category" style="<?php #h3 ?>" value="<?= htmlspecialchars($profile->getCategory(), ENT_QUOTES, 'UTF-8') ?>">
+    <header class="profile-header">
+        <img class="profile-avatar" src="icone-perfil.svg" alt="Ícone de perfil">
+        <div class="profile-identity">
+            <input class="profile-name" name="name" aria-label="Nome" value="<?= htmlspecialchars($profile->getName(), ENT_QUOTES, 'UTF-8') ?>">
+            <input class="profile-category" name="category" aria-label="Categoria" value="<?= htmlspecialchars($profile->getCategory(), ENT_QUOTES, 'UTF-8') ?>">
             <?php if($profile instanceof Teacher): //man, esssa foi a coisa mais genial q eu ja fiz ta KKKKKKKKKKK?>
-                <input name="category" style="<?php #p ?>" value="<?= htmlspecialchars($profile->getSubject(), ENT_QUOTES, 'UTF-8') ?>">
+                <input class="profile-subject" name="subject" aria-label="Matéria" value="<?= htmlspecialchars($profile->getSubject(), ENT_QUOTES, 'UTF-8') ?>">
             <?php
                 endif;    
             ?>
         </div>
-    </div>  
-    <div>
+    </header>
+    <section class="profile-section">
         <h2><?= $showMoreAcceptedReservations ? 'Reservas aceitas' : 'Reservas aceitas (últimos 20 dias)' ?></h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Sala</th>
-                    <th>Data</th>
-                    <th>Horário de início</th>
-                    <th>Horário de fim</th>
-                    <th>Motivo</th>
-                    <th>Matéria/Tópico</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if ($acceptedReservations === []): ?>
-                    <tr>
-                        <td colspan="7">
-                            <?= $showMoreAcceptedReservations
-                                ? 'Nenhuma reserva aceita encontrada.'
-                                : 'Nenhuma reserva aceita nos últimos 20 dias.' ?>
-                        </td>
-                    </tr>
-                <?php else: ?>
-                    <?php foreach ($acceptedReservations as $reservation): ?>
-                        <tr>
-                            <td><?= htmlspecialchars($slotsById[$reservation->getSlot()] ?? 'Sala não encontrada', ENT_QUOTES, 'UTF-8') ?></td>
-                            <td><?= htmlspecialchars($reservation->getReservationDate(), ENT_QUOTES, 'UTF-8') ?></td>
-                            <td><?= htmlspecialchars(substr($reservation->getStartTime(), 0, 5), ENT_QUOTES, 'UTF-8') ?></td>
-                            <td><?= htmlspecialchars(substr($reservation->getEndTime(), 0, 5), ENT_QUOTES, 'UTF-8') ?></td>
-                            <td><?= htmlspecialchars($reservation->getReason() ?? '', ENT_QUOTES, 'UTF-8') ?></td>
-                            <td><?= htmlspecialchars($reservation->getTopic(), ENT_QUOTES, 'UTF-8') ?></td>
-                            <td>Confirmada</td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </tbody>
-        </table>
-        <form action="index.php" method="get">
-            <input type="hidden" name="id" value="<?= htmlspecialchars((string) $profileId, ENT_QUOTES, 'UTF-8') ?>">
-            <input type="hidden" name="showReservationHistory" value="<?= $showReservationHistory ? '1' : '0' ?>">
-            <input type="hidden" name="showMoreAcceptedReservations" value="<?= $showMoreAcceptedReservations ? '0' : '1' ?>">
-            <button type="submit">
-                <?= $showMoreAcceptedReservations ? 'Mostrar menos' : 'Mostrar mais' ?>
-            </button>
-        </form>
-    </div>
-    <div>
-        <h2>Historico de reservas</h2>
-        <div>
-            <table>
+        <div class="table-wrap">
+            <table class="reservation-table">
                 <thead>
                     <tr>
                         <th>Sala</th>
@@ -188,9 +145,56 @@
                         <th>Status</th>
                     </tr>
                 </thead>
+                <tbody>
+                    <?php if ($acceptedReservations === []): ?>
+                        <tr>
+                            <td colspan="7">
+                                <?= $showMoreAcceptedReservations
+                                    ? 'Nenhuma reserva aceita encontrada.'
+                                    : 'Nenhuma reserva aceita nos últimos 20 dias.' ?>
+                            </td>
+                        </tr>
+                    <?php else: ?>
+                        <?php foreach ($acceptedReservations as $reservation): ?>
+                            <tr>
+                                <td><?= htmlspecialchars($slotsById[$reservation->getSlot()] ?? 'Sala não encontrada', ENT_QUOTES, 'UTF-8') ?></td>
+                                <td><?= htmlspecialchars($reservation->getReservationDate(), ENT_QUOTES, 'UTF-8') ?></td>
+                                <td><?= htmlspecialchars(substr($reservation->getStartTime(), 0, 5), ENT_QUOTES, 'UTF-8') ?></td>
+                                <td><?= htmlspecialchars(substr($reservation->getEndTime(), 0, 5), ENT_QUOTES, 'UTF-8') ?></td>
+                                <td><?= htmlspecialchars($reservation->getReason() ?? '', ENT_QUOTES, 'UTF-8') ?></td>
+                                <td><?= htmlspecialchars($reservation->getTopic(), ENT_QUOTES, 'UTF-8') ?></td>
+                                <td>Confirmada</td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </tbody>
             </table>
+        </div>
+        <form action="index.php" method="get">
+            <input type="hidden" name="id" value="<?= htmlspecialchars((string) $profileId, ENT_QUOTES, 'UTF-8') ?>">
+            <input type="hidden" name="showReservationHistory" value="<?= $showReservationHistory ? '1' : '0' ?>">
+            <input type="hidden" name="showMoreAcceptedReservations" value="<?= $showMoreAcceptedReservations ? '0' : '1' ?>">
+            <button class="profile-button" type="submit">
+                <?= $showMoreAcceptedReservations ? 'Mostrar menos' : 'Mostrar mais' ?>
+            </button>
+        </form>
+    </section>
+    <section class="profile-section">
+        <h2>Histórico de reservas</h2>
+        <div class="table-wrap">
+            <table class="reservation-table">
+                <thead>
+                    <tr>
+                        <th>Sala</th>
+                        <th>Data</th>
+                        <th>Horário de início</th>
+                        <th>Horário de fim</th>
+                        <th>Motivo</th>
+                        <th>Matéria/Tópico</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
             <?php if ($showReservationHistory): ?>
-            <table>
                 <tbody>
                     <?php if ($reservations === []): ?>
                         <tr>
@@ -217,21 +221,22 @@
                         <?php endforeach; ?>
                     <?php endif; ?>
                 </tbody>
+            <?php endif; ?>
             </table>
         </div>
-        <?php endif; ?>
         <form action="index.php" method="get">
             <input type="hidden" name="id" value="<?= htmlspecialchars((string) $profileId, ENT_QUOTES, 'UTF-8') ?>">
             <input type="hidden" name="showReservationHistory" value="<?= $showReservationHistory ? '0' : '1' ?>">
             <input type="hidden" name="showMoreAcceptedReservations" value="<?= $showMoreAcceptedReservations ? '1' : '0' ?>">
-            <button type="submit">
+            <button class="profile-button" type="submit">
                 <?= $showReservationHistory ? 'Ocultar reservas' : 'Mostrar reservas' ?>
             </button>
         </form>
-    </div>
+    </section>
     <?php
     endif;
     ?>
-    <a href="../../pcs_destroySession.php">deslogar</a>
+    <a class="logout-link" href="../../pcs_destroySession.php">Deslogar</a>
+    </main>
 </body>
 </html>
