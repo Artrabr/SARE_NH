@@ -502,15 +502,35 @@ class ReservationDB
     public function getAllReservation(): ?array
     //cria uma array com varios objetos reservation
     {
-        $stmt = $this->pdo->query(
-            'SELECT reserved_slot.reserved_slot_id, reserved_slot.reserved_slot_user_id,
-                    reserved_slot.reserved_slot_slot_id, reserved_slot.reserved_slot_topic,
-                    reserved_slot.reserved_slot_start_time, reserved_slot.reserved_slot_end_time,
-                    reserved_slot.reserved_slot_date, reserved_slot.reserved_slot_reason,
-                    reserved_slot.reserved_slot_at, reserved_slot.reserved_slot_status
-             FROM `reservation` AS reserved_slot
-             ORDER BY reserved_slot.reserved_slot_date, reserved_slot.reserved_slot_start_time'
-        );
+        $sql = 'SELECT
+                reserved_slot_id,
+                reserved_slot_user_id,
+                reserved_slot_slot_id,
+                reserved_slot_topic,
+                reserved_slot_start_time,
+                reserved_slot_end_time,
+                reserved_slot_date,
+                reserved_slot_reason,
+                reserved_slot_at,
+                reserved_slot_status
+            FROM `reservation`
+            ORDER BY
+                CASE
+                    WHEN TIMESTAMP(reserved_slot_date, reserved_slot_start_time) >= ? THEN 0
+                    ELSE 1
+                END ASC,
+                CASE
+                    WHEN TIMESTAMP(reserved_slot_date, reserved_slot_start_time) >= ?
+                    THEN TIMESTAMP(reserved_slot_date, reserved_slot_start_time)
+                END DESC,
+                CASE
+                    WHEN TIMESTAMP(reserved_slot_date, reserved_slot_start_time) < ?
+                    THEN TIMESTAMP(reserved_slot_date, reserved_slot_start_time)
+                END DESC,
+                reserved_slot_id ASC';
+        $stmt = $this->pdo->prepare($sql);
+        $now = date('Y-m-d H:i:s');
+        $stmt->execute([$now, $now, $now]);
 
         $reservations = [];
         foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
