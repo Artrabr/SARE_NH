@@ -569,12 +569,13 @@ if ($showMapHint) {
             const [startHour, startMinute] = startTimeSelect.value.split(":").map(Number);
             const startMinutes = startHour * 60 + startMinute;
             const limitMinutes = 22 * 60;
-            const durationMinutes = 45;
+            const minimumDurationMinutes = 45;
+            const endTimeStepMinutes = 15;
 
             for (
-              let endMinutes = startMinutes + durationMinutes;
+              let endMinutes = startMinutes + minimumDurationMinutes;
               endMinutes <= limitMinutes;
-              endMinutes += durationMinutes
+              endMinutes += endTimeStepMinutes
             ) {
               const hours = String(Math.floor(endMinutes / 60)).padStart(2, "0");
               const minutes = String(endMinutes % 60).padStart(2, "0");

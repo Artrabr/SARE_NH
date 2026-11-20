@@ -25,6 +25,18 @@ function connect(){
     return $pdo;
 }
 
+function reservated(
+    int $slotId,
+    string $reservationDate,
+    string $startTime,
+    string $endTime,
+    PDO $pdo
+): bool
+{
+    $db = new ReservationDB($pdo);
+    return $db->isReservationConflicting($slotId, $reservationDate, $startTime, $endTime);
+}
+
 //-------------------------
 //         CÓDIGO
 //-------------------------
@@ -55,12 +67,12 @@ if ($slotId === false || $slotId < 1) {
 
 $startTime = $_POST['start_time'];
 $endTime = $_POST['end_time'];
-$validTimeFormat = is_string($startTime)
+$validTimeFormat = is_string($startTime) //verifica se o formato ta correto
     && is_string($endTime)
     && preg_match('/^(?:[01]\d|2[0-3]):[0-5]\d$/', $startTime)
     && preg_match('/^(?:[01]\d|2[0-3]):[0-5]\d$/', $endTime);
 
-if (!$validTimeFormat || $endTime <= $startTime) {
+if (!$validTimeFormat || $endTime <= $startTime) { //caso nao for valido ou o fim for antes do inicio
     $redirect = PUBLIC_URL . '/index.php?horario_invalido=true';
     $redirect .= '&slot_id=' . $slotId;
     header('Location: ' . $redirect);
@@ -68,6 +80,12 @@ if (!$validTimeFormat || $endTime <= $startTime) {
 }
 
 $pdo = connect();
+
+if (reservated($slotId, $reservationDate, $startTime, $endTime, $pdo)) {
+    disconnect($pdo);
+    header('Location: ' . PUBLIC_URL . '/index.php?horario_ocupado=true&slot_id=' . $slotId);
+    exit();
+}
 
 $db = new ReservationDB($pdo);
 try {

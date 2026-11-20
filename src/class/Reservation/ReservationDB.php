@@ -12,6 +12,72 @@ class ReservationDB
         $this->pdo = $pdo;
     }
 
+    /* Retorna os intervalos de 45 minutos livres para uma sala na data informada*/
+    public function availableTimes(string $date, int $slotId): array
+    {
+        if (
+            $slotId < 1 ||
+            !preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $date, $dateParts) ||
+            !checkdate((int) $dateParts[2], (int) $dateParts[3], (int) $dateParts[1])
+        ) {
+            throw new InvalidArgumentException('a data ou o id estao errados');
+        }
+
+        $stmt = $this->pdo->prepare(
+            "SELECT reserved_slot_start_time, reserved_slot_end_time
+             FROM `reservation`
+             WHERE reserved_slot_date = :date
+             AND reserved_slot_slot_id = :slot_id
+             AND reserved_slot_status IN ('pending', 'confirmed')"
+        );
+        $stmt->execute([
+            'date' => $date,
+            'slot_id' => $slotId,
+        ]);
+
+        $results = [];
+        $reservations = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $startMinutes = 7 * 60 + 30;
+        $endLimitMinutes = 22 * 60;
+        $durationMinutes = 45;
+
+        for (
+            $start = $startMinutes;
+            $start + $durationMinutes <= $endLimitMinutes;
+            $start += $durationMinutes
+        ) {
+            $end = $start + $durationMinutes;
+            $isAvailable = true;
+
+            foreach ($reservations as $reservation) {
+                [$reservedStartHour, $reservedStartMinute] = array_map(
+                    'intval',
+                    explode(':', substr($reservation['reserved_slot_start_time'], 0, 5))
+                );
+                [$reservedEndHour, $reservedEndMinute] = array_map(
+                    'intval',
+                    explode(':', substr($reservation['reserved_slot_end_time'], 0, 5))
+                );
+                $reservedStart = $reservedStartHour * 60 + $reservedStartMinute;
+                $reservedEnd = $reservedEndHour * 60 + $reservedEndMinute;
+
+                if ($start < $reservedEnd && $end > $reservedStart) {
+                    $isAvailable = false;
+                    break;
+                }
+            }
+
+            if ($isAvailable) {
+                $results[] = [
+                    'start_time' => sprintf('%02d:%02d', intdiv($start, 60), $start % 60),
+                    'end_time' => sprintf('%02d:%02d', intdiv($end, 60), $end % 60),
+                ];
+            }
+        }
+
+        return $results;
+    }
+
     /*
      Busca reservas que comecam dentro do intervalo informado.
     
@@ -76,24 +142,24 @@ class ReservationDB
     }
 
     /*
-    Busca as reservas de um usuario que comecam dentro do intervalo informado.
-    
-    Exemplo de uso:
-    
-    $reservationDB = new ReservationDB(Connection::Connect());
-    $reservations = $reservationDB->findOccupiedReservationsByUserId(12, '12:00', '15:00');
-    
-    foreach ($reservations as $reservation) {
-        echo $reservation->getUserName();
-        echo $reservation->getSlotName();
-        echo $reservation->getTopic();
-    }
-    
-    O primeiro argumento e o ID do usuario. Os horarios devem estar no
-    formato HH:MM. Se nao houver reservas, o retorno sera um array vazio.
-    
-    @return ReservationSearchResult[]
-     */
+        Busca as reservas de um usuario que comecam dentro do intervalo informado.
+        
+        Exemplo de uso:
+        
+        $reservationDB = new ReservationDB(Connection::Connect());
+        $reservations = $reservationDB->findOccupiedReservationsByUserId(12, '12:00', '15:00');
+        
+        foreach ($reservations as $reservation) {
+            echo $reservation->getUserName();
+            echo $reservation->getSlotName();
+            echo $reservation->getTopic();
+        }
+        
+        O primeiro argumento e o ID do usuario. Os horarios devem estar no
+        formato HH:MM. Se nao houver reservas, o retorno sera um array vazio.
+        
+        @return ReservationSearchResult[]
+    */
     public function findOccupiedReservationsByUserId(int $userId,string $timeStart,string $endTime): array 
     {
         if ($userId < 1) {
@@ -152,7 +218,7 @@ class ReservationDB
         return !empty($conflictingReservations);
     }
 
-    public function getReservationInThisRange(
+    public function getReservationInThisRange( //apagar esse codigo
         int $slotId,
         string $reservationDate,
         string $startTime,
@@ -171,8 +237,8 @@ class ReservationDB
         $stmt->execute([
             'slot_id' => $slotId,
             'reservation_date' => $reservationDate,
-            'start_time' => $startTime,
-            'end_time' => $endTime,
+            'start_time' => $startTime . ':00',
+            'end_time' => $endTime . ':00',
         ]);
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
