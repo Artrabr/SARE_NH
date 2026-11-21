@@ -550,4 +550,35 @@ class ReservationDB
 
         return $reservations ?? null;
     }
+
+
+    /*
+    Retorna o ID da reserva mais próxima do momento atual.
+    Em caso de empate, prioriza a reserva futura.
+    Retorna null quando não há reservas.
+    */
+    public function getClosestReservation(): ?int
+    {
+        $stmt = $this->pdo->prepare(
+            'SELECT reserved_slot_id
+             FROM `reservation`
+             ORDER BY
+                ABS(TIMESTAMPDIFF(
+                    SECOND,
+                    ?,
+                    TIMESTAMP(reserved_slot_date, reserved_slot_start_time)
+                )) ASC,
+                CASE
+                    WHEN TIMESTAMP(reserved_slot_date, reserved_slot_start_time) >= ? THEN 0
+                    ELSE 1
+                END ASC,
+                reserved_slot_id ASC
+             LIMIT 1'
+        );
+        $now = date('Y-m-d H:i:s');
+        $stmt->execute([$now, $now]);
+        $reservationId = $stmt->fetchColumn();
+
+        return $reservationId === false ? null : (int) $reservationId;
+    }
 }

@@ -172,6 +172,10 @@ body {
   font-size: clamp(1.8rem, 2vw, 2.5rem);
 }
 
+.table-heading h1 {
+  margin-bottom: 0;
+}
+
 .panel p {
   margin: 0;
   font-size: 1rem;
@@ -272,10 +276,19 @@ body {
   background: rgba(136, 160, 109, 0.06);
 }
 
+.table-wrap tr.closest-reservation td {
+  background: rgba(136, 160, 109, 0.28);
+  font-weight: 600;
+}
+
+.table-wrap tr.closest-reservation td:first-child {
+  border-left: 5px solid var(--primary);
+}
+
 .reservation-status {
   width: 100%;
   min-width: 120px;
-  padding: 8px 10px;
+  padding: 0px;
   border: 2px solid var(--border);
   border-radius: 0;
   background: var(--panel);

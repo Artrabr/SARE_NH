@@ -16,6 +16,7 @@
     $pdo = Connection::Connect();
     $reservationDB = new ReservationDB($pdo);
     $reservations = $reservationDB->getAllReservation();
+    $closestReservationId = $reservationDB->getClosestReservation();
     $userDB = new UserDB($pdo);
 
     $slotDB = new SlotDB($pdo);
@@ -62,7 +63,10 @@
 
         <main class="content">
             <section class="panel table-panel">
-                <h1>Reservas de salas</h1>
+                <div class="table-heading">
+                    <h1>Reservas de salas</h1>
+                    <p><i>A reserva mais proxima estará em verde</i></p>
+                </div>
                 <div> <!-- ===========================Mensagens de status=========================== -->
                 <?php if (($_GET['status'] ?? '') === 'success'): ?>
                     <p role="status">Status da reserva atualizado.</p>
@@ -98,7 +102,7 @@
                                     $status = $reservation->getStatus();
                                     $reservationId = $reservation->getId();
                                 ?>
-                                    <tr>
+                                    <tr<?= $reservationId === $closestReservationId ? ' class="closest-reservation"' : '' ?>>
                                         <td><?= htmlspecialchars($user ? $user->getName() : 'Usuário não encontrado', ENT_QUOTES, 'UTF-8') ?></td>
                                         <td><?= htmlspecialchars($slotsById[$reservation->getSlot()] ?? 'Sala não encontrada', ENT_QUOTES, 'UTF-8') ?></td>
                                         <td><?= htmlspecialchars($reservation->getTopic(), ENT_QUOTES, 'UTF-8') ?></td>
